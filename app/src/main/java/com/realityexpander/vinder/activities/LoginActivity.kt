@@ -51,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth.removeAuthStateListener(firebaseAuthListener)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onLogin(v: View) {
         var proceed = true
 

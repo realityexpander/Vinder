@@ -54,6 +54,7 @@ class SignupActivity : AppCompatActivity() {
         firebaseAuth.removeAuthStateListener(firebaseAuthListener)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onSignup(v: View) {
         var proceed = true
 

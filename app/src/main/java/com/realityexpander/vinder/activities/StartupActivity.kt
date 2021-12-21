@@ -41,11 +41,13 @@ class StartupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_startup)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onLogin(v: View) {
         startActivity(LoginActivity.newIntent(this))
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onSignup(v: View) {
         startActivity(SignupActivity.newIntent(this))
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
