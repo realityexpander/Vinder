@@ -13,17 +13,18 @@ import com.realityexpander.vinder.R
 
 class VinderActivity : AppCompatActivity() {
 
-    val flingContainer: SwipeFlingAdapterView = findViewById<SwipeFlingAdapterView>(R.id.frame);
-    val al = ArrayList<String>();
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tinder)
 
-        al.add("php");
-        al.add("c");
-        al.add("python");
-        al.add("java");
+        val flingContainer: SwipeFlingAdapterView = findViewById<SwipeFlingAdapterView>(R.id.frameTemp);
+        val al = ArrayList<String>();
+
+        al.add("php")
+        al.add("c")
+        al.add("python")
+        al.add("java")
+        al.add("Kotlin")
 
         //choose your favorite adapter
         val arrayAdapter = ArrayAdapter<String>(this, R.layout.item, R.id.helloText, al );
@@ -35,9 +36,9 @@ class VinderActivity : AppCompatActivity() {
 
             override fun removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                Log.d("LIST", "removed object!");
-                al.removeAt(0);
-                arrayAdapter.notifyDataSetChanged();
+                Log.d("LIST", "removed object!")
+                al.removeAt(0)
+                arrayAdapter.notifyDataSetChanged()
             }
 
             override fun onLeftCardExit(dataObject: Any?) {

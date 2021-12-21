@@ -23,7 +23,7 @@ class SignupActivity : AppCompatActivity() {
     private val firebaseAuthListener = FirebaseAuth.AuthStateListener {
         val user = firebaseAuth.currentUser
         if (user != null) {
-//            startActivity(VinderActivity.newIntent(this))
+            startActivity(VinderActivity.newIntent(this))
             finish()
         }
     }
