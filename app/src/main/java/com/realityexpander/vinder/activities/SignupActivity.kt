@@ -58,6 +58,7 @@ class SignupActivity : AppCompatActivity() {
     fun onSignup(v: View) {
         var proceed = true
 
+        // Form Validation
         if (bind.emailET.text.isNullOrEmpty()) {
             bind.emailTIL.error = "Email is required"
             bind.emailTIL.isErrorEnabled = true
