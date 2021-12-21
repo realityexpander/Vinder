@@ -1,23 +1,26 @@
-package com.realityexpander.vinder
+package com.realityexpander.vinder.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.get
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
+import com.realityexpander.vinder.R
 
-const val TAG = "MainActivity"
+const val TAG = "StartupActivity"
 
-class MainActivity : AppCompatActivity() {
+class StartupActivity : AppCompatActivity() {
+
+    val flingContainer: SwipeFlingAdapterView = findViewById<SwipeFlingAdapterView>(R.id.frame);
+    val al = ArrayList<String>();
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_startup)
 
-        val flingContainer = findViewById<SwipeFlingAdapterView>(R.id.frame);
-
-        val al = ArrayList<String>();
         al.add("php");
         al.add("c");
         al.add("python");
@@ -42,11 +45,11 @@ class MainActivity : AppCompatActivity() {
                 //Do something on the left!
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
-                Toast.makeText(this@MainActivity, "Left!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this@StartupActivity, "Left!", Toast.LENGTH_SHORT).show();
             }
 
             override fun onRightCardExit(dataObject: Any?) {
-                Toast.makeText(this@MainActivity, "Right!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this@StartupActivity, "Right!", Toast.LENGTH_SHORT).show();
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
@@ -65,12 +68,15 @@ class MainActivity : AppCompatActivity() {
         // Optionally add an OnItemClickListener
         flingContainer.setOnItemClickListener { position, dataObject ->
             Toast.makeText(
-                this@MainActivity,
+                this@StartupActivity,
                 "Clicked! $position $dataObject",
                 Toast.LENGTH_SHORT
             ).show()
         }
     }
+
+    fun onLogin(view: View) {}
+    fun onSignup(view: View) {}
 
 
 }
