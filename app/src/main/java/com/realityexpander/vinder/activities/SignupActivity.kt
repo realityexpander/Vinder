@@ -22,8 +22,8 @@ class SignupActivity : AppCompatActivity() {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firebaseAuthListener = FirebaseAuth.AuthStateListener {
         val user = firebaseAuth.currentUser
-        if(user != null) {
-//            startActivity(TinderActivity.newIntent(this))
+        if (user != null) {
+//            startActivity(VinderActivity.newIntent(this))
             finish()
         }
     }
@@ -45,19 +45,34 @@ class SignupActivity : AppCompatActivity() {
     }
 
     fun onSignup(v: View) {
-        if(!bind.emailET.text.toString().isNullOrEmpty() && !bind.passwordET.text.toString().isNullOrEmpty()) {
-            firebaseAuth.createUserWithEmailAndPassword(bind.emailET.text.toString(), bind.passwordET.text.toString())
+        if (bind.emailET.text.toString().isNotEmpty() && bind.passwordET.text.toString()
+                .isNotEmpty()
+        ) {
+            // Create user
+            firebaseAuth.createUserWithEmailAndPassword(
+                bind.emailET.text.toString(),
+                bind.passwordET.text.toString()
+            )
                 .addOnCompleteListener { task ->
-                    if(!task.isSuccessful) {
-                        Toast.makeText(this, "Signup error ${task.exception?.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    if (!task.isSuccessful) {
+                        Toast.makeText(this, "Signup error ${task.exception?.localizedMessage}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         val email = bind.emailET.text.toString()
                         val userId = firebaseAuth.currentUser?.uid ?: ""
+
+                        // Save User to DB
                         val user = User(userId, "", "", email, "", "", "")
                         firebaseDatabase.child(DATA_USERS_COLLECTION).child(userId).setValue(user)
                     }
                 }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.nothing, R.anim.slide_out_right)
     }
 
     companion object {

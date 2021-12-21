@@ -2,13 +2,14 @@ package com.realityexpander.vinder.activities
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.realityexpander.vinder.R
 import com.realityexpander.vinder.databinding.ActivityLoginBinding
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -18,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
     private val firebaseAuthListener = FirebaseAuth.AuthStateListener {
         val user = firebaseAuth.currentUser
         if(user != null) {
-            //startActivity(TinderActivity.newIntent(this))
+            startActivity(VinderActivity.newIntent(this))
             finish()
         }
     }
@@ -48,6 +49,11 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.nothing, R.anim.slide_out_right)
     }
 
     companion object {
