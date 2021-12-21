@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "878173092575",
+    "project_id": "vinder-dating-app",
+    "storage_bucket": "vinder-dating-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878173092575:android:a9c8a3446f21bfebb4476a",
+        "android_client_info": {
+          "package_name": "com.realityexpander.vinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "878173092575-b7bnudtrdkn8s946atomdfpsq6q7skvd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVov4jZvjx2nQUTokIlUw8Oaip9fMfEJI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878173092575-b7bnudtrdkn8s946atomdfpsq6q7skvd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
