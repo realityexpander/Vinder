@@ -81,6 +81,7 @@ class SignupActivity : AppCompatActivity() {
                     .addOnCompleteListener { task ->
                         if (!task.isSuccessful) {
                             Toast.makeText(
+
                                 this, "Signup error ${task.exception?.localizedMessage}",
                                 Toast.LENGTH_SHORT
                             ).show()
