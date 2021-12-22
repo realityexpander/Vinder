@@ -82,8 +82,8 @@ class VinderActivity : AppCompatActivity(), HostContextI {
                     }
                 }
             }
-
         })
+        bind.navigationTabs.setTabIconTintResource(R.color.tab_item)
 
         profileTab.select()
     }
