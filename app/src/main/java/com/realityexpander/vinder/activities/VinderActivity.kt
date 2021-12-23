@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.realityexpander.vinder.HostContextI
 import com.realityexpander.vinder.R
 import com.realityexpander.vinder.databinding.ActivityVinderBinding
@@ -15,6 +17,7 @@ import com.realityexpander.vinder.fragments.BaseFragment
 import com.realityexpander.vinder.fragments.MatchesFragment
 import com.realityexpander.vinder.fragments.ProfileFragment
 import com.realityexpander.vinder.fragments.SwipeFragment
+import com.realityexpander.vinder.utils.DATA_USERS_COLLECTION
 
 // Tab & Fragment Id's
 private enum class FragmentId {
