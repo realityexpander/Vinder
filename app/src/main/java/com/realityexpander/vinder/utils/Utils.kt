@@ -12,6 +12,7 @@ import com.realityexpander.vinder.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.contracts.ExperimentalContracts
 
 fun ImageView.loadUrl(url: String?, errorDrawable: Int = R.drawable.empty) {
     if (url.isNullOrEmpty()) return
@@ -49,4 +50,9 @@ fun progressDrawable(context: Context): CircularProgressDrawable {
 @BindingAdapter("android:imageUrl")
 fun loadImage(view: ImageView, url: String?) {
     view.loadUrl(url)
+}
+
+// opposite of isNullOrEmpty()
+fun CharSequence?.isNotNullAndNotEmpty(): Boolean {
+    return this != null && this.isNotEmpty()
 }
