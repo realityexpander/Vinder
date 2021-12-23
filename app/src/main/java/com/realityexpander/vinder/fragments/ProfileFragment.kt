@@ -6,14 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.realityexpander.vinder.R
 import com.realityexpander.vinder.databinding.FragmentProfileBinding
 import com.realityexpander.vinder.interfaces.UpdateUiI
 import com.realityexpander.vinder.models.User
@@ -43,7 +40,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _bind = FragmentProfileBinding.inflate(inflater, container, false)
         return bind.root
@@ -59,9 +56,13 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
             // not needed yet
             // onViewStateRestored(savedInstanceState)
         }
+
+        onUpdateUI()
     }
 
     override fun onUpdateUI() {
+        if(!isAdded) return
+
         bind.progressLayout.visibility = View.VISIBLE
 
         userDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -69,9 +70,10 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                 bind.progressLayout.visibility = View.GONE
             }
 
-            override fun onDataChange(p0: DataSnapshot) {
+            override fun onDataChange(userSnapshot: DataSnapshot) {
                 if (isAdded) {
-                    val user = p0.getValue(User::class.java)
+                    val user = userSnapshot.getValue(User::class.java)
+
                     bind.nameEt.setText(user?.username, TextView.BufferType.EDITABLE)
                     bind.emailEt.setText(user?.email, TextView.BufferType.EDITABLE)
                     bind.ageEt.setText(user?.age, TextView.BufferType.EDITABLE)

@@ -71,7 +71,7 @@ class VinderActivity : AppCompatActivity(), HostContextI {
                     profileTab -> {
                         if (profileFragment == null) {
                             profileFragment = ProfileFragment()
-                            profileFragment!!.onUpdateUI()
+                            // profileFragment!!.onUpdateUI()
                         }
                         replaceFragment(profileFragment!!)
                     }
