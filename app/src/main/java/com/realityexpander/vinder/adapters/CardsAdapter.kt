@@ -21,11 +21,11 @@ class CardsAdapter(context: Context?, resourceId: Int, users: List<User>):
         val finalView = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_card, parent, false)
 
         val userInfoLayout = finalView.findViewById<LinearLayout>(R.id.cardUserInfoLayout)
-        val image = finalView.findViewById<ImageView>(R.id.cardProfileImageIv)
-        val nameInfo = finalView.findViewById<TextView>(R.id.cardNameTV)
+        val profileImageIv = finalView.findViewById<ImageView>(R.id.cardProfileImageIv)
+        val nameInfoTv = finalView.findViewById<TextView>(R.id.cardNameTV)
 
-        "${user?.username}, ${user?.age}".also { nameInfo.text = it }
-        image.loadUrl(user?.profileImageUrl)
+        "${user?.username}, ${user?.age}".also { nameInfoTv.text = it }
+        profileImageIv.loadUrl(user?.profileImageUrl)
 
         userInfoLayout.setOnClickListener {
 //            finalView.context.startActivity(UserInfoActivity.newIntent(finalView.context, user.uid))

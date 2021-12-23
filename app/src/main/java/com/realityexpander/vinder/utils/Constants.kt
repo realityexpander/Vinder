@@ -1,21 +1,25 @@
 package com.realityexpander.vinder.utils
 
 // ------- USERS COLLECTION ---------
-val DATA_USERS_COLLECTION = "Users"
-val DATA_USER_USERNAME = "username"
-val DATA_USER_EMAIL = "email"
-val DATA_USER_AGE = "age"
-val DATA_USER_GENDER = "gender"
-val DATA_USER_GENDER_PREFERENCE = "preferredGender"
-val PREFERENCE_GENDER_MALE = "male"
-val PREFERENCE_GENDER_FEMALE = "female"
-val DATA_USER_PROFILE_IMAGE_URL = "profileImageUrl"
-val DATA_USER_SWIPES_LEFT_USER_ID = "swipesLeftUserIds"
-val DATA_USER_SWIPES_RIGHT_USER_ID = "swipesRightUserIds"
-val DATA_USER_MATCHES_USER_ID = "matchesUserIds"
+const val DATA_USERS_COLLECTION = "Users"
+const val DATA_USER_USERNAME = "username"
+const val DATA_USER_EMAIL = "email"
+const val DATA_USER_AGE = "age"
+const val DATA_USER_GENDER = "gender"
+const val DATA_USER_GENDER_PREFERENCE = "preferredGender"
+const val PREFERENCE_GENDER_MALE = "male"
+const val PREFERENCE_GENDER_FEMALE = "female"
+const val DATA_USER_PROFILE_IMAGE_URL = "profileImageUrl"
+const val DATA_USER_SWIPE_LEFT_USER_IDS = "swipeLeftUserIds"
+const val DATA_USER_SWIPE_RIGHT_USER_IDS = "swipeRightUserIds"
+const val DATA_USER_MATCH_USER_IDS = "matchUserIds"
 
 
 // ------- CHATS COLLECTION ---------
-val DATA_CHATS_COLLECTION = "Chats"
+const val DATA_CHATS_COLLECTION = "Chats"
   // sub-collection: messages
 val DATA_CHAT_MESSAGES = "Messages"
+
+
+// ------- IMAGE STORAGE --------
+const val DATA_IMAGE_STORAGE_PROFILE_IMAGES="profileImage"

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -40,15 +41,18 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
         get() = _bind!!
 
     private val firebaseAuth = FirebaseAuth.getInstance()
-    private val userId = firebaseAuth.currentUser?.uid
+    private val userId = firebaseAuth.currentUser?.uid!!
     private val userDatabase = FirebaseDatabase.getInstance()
         .reference
         .child(DATA_USERS_COLLECTION)
-        .child(userId!!)
+    private val chatDatabase = FirebaseDatabase.getInstance()
+        .reference
+        .child(DATA_CHATS_COLLECTION)
 
     private var pickedImageUri: Uri? =
         null // uri to an image file on android device before updating status
     private var savedProfileImageUrl = "" // url saved in DB after user updates profile
+    private var imagePickerForResultLauncher: ActivityResultLauncher<Array<out String>>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,6 +88,14 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
         bind.applyButton.setOnClickListener { onApply() }
         bind.signoutButton.setOnClickListener { (activity as HostContextI).onSignout() }
 
+        // Setup image picker (must be setup before onResume/onStart)
+        imagePickerForResultLauncher =
+            registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                if (uri != null) {
+                    imagePickerResultCallback(uri)
+                }
+            }
+
         onUpdateUI()
     }
 
@@ -92,7 +104,8 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
 
         bind.progressLayout.visibility = View.VISIBLE
 
-        userDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
+        userDatabase.child(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 bind.progressLayout.visibility = View.GONE
             }
@@ -150,11 +163,21 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                 if (bind.radioMan2.isChecked) PREFERENCE_GENDER_MALE
                 else PREFERENCE_GENDER_FEMALE
 
-            userDatabase.child(DATA_USER_USERNAME).setValue(name)
-            userDatabase.child(DATA_USER_AGE).setValue(age)
-            userDatabase.child(DATA_USER_EMAIL).setValue(email)
-            userDatabase.child(DATA_USER_GENDER).setValue(gender)
-            userDatabase.child(DATA_USER_GENDER_PREFERENCE).setValue(preferredGender)
+            userDatabase.child(userId)
+                .child(DATA_USER_USERNAME)
+                .setValue(name)
+            userDatabase.child(userId)
+                .child(DATA_USER_AGE)
+                .setValue(age)
+            userDatabase.child(userId)
+                .child(DATA_USER_EMAIL)
+                .setValue(email)
+            userDatabase.child(userId)
+                .child(DATA_USER_GENDER)
+                .setValue(gender)
+            userDatabase.child(userId)
+                .child(DATA_USER_GENDER_PREFERENCE)
+                .setValue(preferredGender)
 
             // If the user picked a new profile, save it
             storePickedProfileImage()
@@ -164,25 +187,39 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
         }
     }
 
-    // Setup image picker (must be setup before onResume/onStart)
-    private var imagePickerResultCallback: (uri: Uri) -> Unit = {}
-    private val imagePickerForResultLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            if (uri != null) {
-                imagePickerResultCallback(uri)
-            }
-        }
+    private fun onClearMatchesAndSwipes() {
+        // Remove the SwipeLeft userIds
+        userDatabase.child(userId)
+            .child(DATA_USER_SWIPE_LEFT_USER_IDS)
+            .child(userId)
+            .removeValue()
 
+        // Remove the SwipeRight userIds
+        userDatabase.child(userId)
+            .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+            .child(userId)
+            .removeValue()
+
+        // Remove the match chats for this user
+
+        // Remove the Match userIds
+        userDatabase.child(userId)
+            .child(DATA_USER_MATCH_USER_IDS)
+            .child(userId)
+            .removeValue()
+    }
+
+    private var imagePickerResultCallback: (uri: Uri) -> Unit = {}
     private fun startImagePickerActivity(imagePickerResultCallback: (uri: Uri) -> Unit) {
         this.imagePickerResultCallback = imagePickerResultCallback
-        imagePickerForResultLauncher.launch(arrayOf("image/*")) // Launch Image Picker
+        imagePickerForResultLauncher?.launch(arrayOf("image/*")) // Launch Image Picker
     }
 
     private fun storePickedProfileImage() {
-        if (pickedImageUri != null && userId != null) {
+        if (pickedImageUri != null) {
             val filePath = FirebaseStorage.getInstance()
                 .reference
-                .child("profileImage")
+                .child(DATA_IMAGE_STORAGE_PROFILE_IMAGES)
                 .child(userId)
             var bitmap: Bitmap? = null
 
@@ -206,7 +243,8 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                     .addOnSuccessListener { uri ->
                         savedProfileImageUrl = uri.toString()
 
-                        userDatabase.child(DATA_USER_PROFILE_IMAGE_URL)
+                        userDatabase.child(userId)
+                            .child(DATA_USER_PROFILE_IMAGE_URL)
                             .setValue(savedProfileImageUrl)
                         bind.photoIv.loadUrl(savedProfileImageUrl)
                         pickedImageUri = null

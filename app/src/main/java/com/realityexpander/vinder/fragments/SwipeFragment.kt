@@ -30,13 +30,16 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
     private val userDatabase = FirebaseDatabase.getInstance()
         .reference
         .child(DATA_USERS_COLLECTION)
+    private val chatDatabase = FirebaseDatabase.getInstance()
+        .reference
+        .child(DATA_CHATS_COLLECTION)
 
     private var cardsAdapter: ArrayAdapter<User>? = null
     private var rowItems = ArrayList<User>()
 
     private var preferredGender: String? = null
-    private var userName: String? = null
-    private var imageUrl: String? = null
+    private var username: String? = null
+    private var userProfileImageUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,18 +62,18 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
             // onViewStateRestored(savedInstanceState)
         }
 
-        // Get User profile
+        // Get Current User profile
         userDatabase.child(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
                 }
 
-                override fun onDataChange(p0: DataSnapshot) {
-                    val user = p0.getValue(User::class.java) ?: return
+                override fun onDataChange(currentUser: DataSnapshot) {
+                    val user = currentUser.getValue(User::class.java) ?: return
 
                     preferredGender = user.preferredGender
-                    userName = user.username
-                    imageUrl = user.profileImageUrl
+                    username = user.username
+                    userProfileImageUrl = user.profileImageUrl
 
                     onUpdateUI()
                 }
@@ -107,23 +110,34 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
             override fun onLeftCardExit(selectedUserItem: Any?) {
                 val user = selectedUserItem as User
 
+                // Add the swipedLeft userId to the current user's list of swipedLeft userIds
                 userDatabase.child(user.uid.toString())
-                    .child(DATA_USER_SWIPES_LEFT_USER_ID)
+                    .child(DATA_USER_SWIPE_LEFT_USER_IDS)
                     .child(userId)
                     .setValue(true)
+
+                // Notify there are no more users to swipe
+                if (rowItems.isEmpty()) {
+                    bind.noUsersLayout.visibility = View.VISIBLE
+                }
             }
 
-            override fun onRightCardExit(selectedUserItem: Any?) {
-                val selectedUser = selectedUserItem as User
-                val selectedUserId = selectedUser.uid
+            override fun onRightCardExit(swipedRightUserItem: Any?) {
+                val swipedRightUser = swipedRightUserItem as User
+                val swipedRightUserId = swipedRightUser.uid
 
-                if (selectedUserId.isNotNullAndNotEmpty()) {
-                    addMatch(userId, selectedUserId!!, selectedUser)
+                if (swipedRightUserId.isNotNullAndNotEmpty()) {
+                    addMatch(userId, swipedRightUserId!!, swipedRightUser)
+                }
+
+                // Notify there are no more users to swipe
+                if (rowItems.isEmpty()) {
+                    bind.noUsersLayout.visibility = View.VISIBLE
                 }
             }
 
             override fun onAdapterAboutToEmpty(p0: Int) {}
-            override fun onScroll(p0: Float) {}
+            override fun onScroll(scrollAmount: Float) {}
         })
 
         // No taps on the frame
@@ -131,49 +145,74 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
     }
 
     private fun addMatch(
-        userId: String,
-        selectedUserId: String,
-        selectedUser: User
+        currentUserId: String,
+        swipedRightUserId: String,
+        swipedRightUser: User
     ) {
-        userDatabase.child(userId)
-            .child(DATA_USER_SWIPES_RIGHT_USER_ID)
+        userDatabase.child(currentUserId)
+            .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
                 }
 
-                override fun onDataChange(p0: DataSnapshot) {
-                    if (p0.hasChild(selectedUserId)) {
+                override fun onDataChange(swipeRightUserIds: DataSnapshot) {
+                    if (swipeRightUserIds.hasChild(swipedRightUserId)) {
                         Toast.makeText(context, "Match!", Toast.LENGTH_SHORT).show()
 
-//                        val chatKey = chatDatabase.push().key
+                        // create new matchChat document
+                        val matchChatId = chatDatabase.push().key
 
-//                        if (chatKey != null) {
-//                            userDatabase.child(userId)
-//                                .child(DATA_USER_SWIPES_RIGHT_USER_ID)
-//                                .child(selectedUserId)
-//                                .removeValue()
-//                            userDatabase.child(userId)
-//                                .child(DATA_USER_MATCHES_USER_ID)
-//                                .child(selectedUserId)
-//                                .setValue(chatKey)
-//                            userDatabase.child(selectedUserId)
-//                                .child(DATA_USER_MATCHES_USER_ID)
-//                                .child(userId)
-//                                .setValue(chatKey)
+                        if (matchChatId != null) {
+                            // -----------------------------------------------------
+                            // ------ Setup the match for the matched users --------
+                            // -----------------------------------------------------
+                            // Add the swipedRight userId to the current user's list of swipedRight userIds
+                            userDatabase.child(currentUserId)
+                                .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+                                .child(swipedRightUserId)
+                                .removeValue()
 
-//                            chatDatabase.child(chatKey).child(userId).child(DATA_NAME)
-//                                .setValue(userName)
-//                            chatDatabase.child(chatKey).child(userId).child(DATA_IMAGE_URL)
-//                                .setValue(imageUrl)
-//
-//                            chatDatabase.child(chatKey).child(selectedUserId).child(DATA_NAME)
-//                                .setValue(selectedUser.name)
-//                            chatDatabase.child(chatKey).child(selectedUserId).child(DATA_IMAGE_URL)
-//                                .setValue(selectedUser.imageUrl)
-//                        }
+                            // Add the swipedRight userId to the current user's list of matched userIds
+                            userDatabase.child(currentUserId)
+                                .child(DATA_USER_MATCH_USER_IDS)
+                                .child(swipedRightUserId)
+                                .setValue(matchChatId)
+                            // Add the current userId to the swipedRight user's list of matched userIds
+                            userDatabase.child(swipedRightUserId)
+                                .child(DATA_USER_MATCH_USER_IDS)
+                                .child(currentUserId)
+                                .setValue(matchChatId)
+
+                            // --------------------------------
+                            // ----- Setup the match chat -----
+                            // --------------------------------
+                            // Add the current user's username to the Match Chat
+                            chatDatabase.child(matchChatId)
+                                .child(currentUserId)
+                                .child(DATA_USER_USERNAME)
+                                .setValue(username)
+                            // Add the current user's profile image to the Match Chat
+                            chatDatabase.child(matchChatId)
+                                .child(currentUserId)
+                                .child(DATA_USER_PROFILE_IMAGE_URL)
+                                .setValue(userProfileImageUrl)
+
+                            // Add the swipedRight user's username to the Match Chat
+                            chatDatabase.child(matchChatId)
+                                .child(swipedRightUserId)
+                                .child(DATA_USER_USERNAME)
+                                .setValue(swipedRightUser.username)
+                            // Add the swipedRight user's profile image to the Match Chat
+                            chatDatabase.child(matchChatId)
+                                .child(swipedRightUserId)
+                                .child(DATA_USER_PROFILE_IMAGE_URL)
+                                .setValue(swipedRightUser.profileImageUrl)
+                        }
                     } else {
-                        userDatabase.child(selectedUserId).child(DATA_USER_SWIPES_RIGHT_USER_ID)
-                            .child(userId)
+                        // Add the current userId to the swipedRight user's list of swiped right userIds
+                        userDatabase.child(swipedRightUserId)
+                            .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+                            .child(currentUserId)
                             .setValue(true)
                     }
                 }
@@ -186,8 +225,10 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         bind.noUsersLayout.visibility = View.GONE
         bind.progressLayout.visibility = View.VISIBLE
 
+        rowItems.clear()
+
         // Query all users of the preferred gender
-        userDatabase.orderByChild(DATA_USER_GENDER_PREFERENCE)
+        userDatabase.orderByChild(DATA_USER_GENDER)
             .equalTo(preferredGender)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
@@ -200,11 +241,11 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                             var showUser = true
 
                             // has this swipeUser already been swiped?
-                            if (child.child(DATA_USER_SWIPES_LEFT_USER_ID)
+                            if (child.child(DATA_USER_SWIPE_LEFT_USER_IDS)
                                     .hasChild(userId)
-                                || child.child(DATA_USER_SWIPES_RIGHT_USER_ID)
+                                || child.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
                                     .hasChild(userId)
-                                || child.child(DATA_USER_MATCHES_USER_ID)
+                                || child.child(DATA_USER_MATCH_USER_IDS)
                                     .hasChild(userId)
                             ) {
                                 showUser = false

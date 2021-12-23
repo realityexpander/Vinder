@@ -16,6 +16,9 @@ import com.realityexpander.vinder.fragments.MatchesFragment
 import com.realityexpander.vinder.fragments.ProfileFragment
 import com.realityexpander.vinder.fragments.SwipeFragment
 
+// Firebase console
+// https://console.firebase.google.com/u/1/project/vinder-dating-app/database/vinder-dating-app-default-rtdb/data
+
 // Tab & Fragment Id's
 private enum class FragmentId {
     PROFILE,
