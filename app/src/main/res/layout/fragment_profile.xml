@@ -23,9 +23,11 @@
                 <ImageView
                         android:id="@+id/photoIv"
                         android:layout_width="@dimen/standard_width"
-                        android:layout_height="@dimen/standard_width"
+                        android:layout_height="250dp"
+                        android:maxHeight="300dp"
                         android:contentDescription="Profile Image"
                         android:paddingBottom="8dp"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/default_pic" />
 
                 <com.google.android.material.textfield.TextInputLayout

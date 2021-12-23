@@ -5,4 +5,5 @@ import com.realityexpander.vinder.fragments.BaseFragment
 interface HostContextI {
     fun onAndroidFragmentCreated(fragment: BaseFragment)
     fun onSignout()
+    fun profileComplete()
 }

@@ -8,8 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.realityexpander.vinder.HostContextI
 import com.realityexpander.vinder.R
 import com.realityexpander.vinder.databinding.ActivityVinderBinding
@@ -17,7 +15,6 @@ import com.realityexpander.vinder.fragments.BaseFragment
 import com.realityexpander.vinder.fragments.MatchesFragment
 import com.realityexpander.vinder.fragments.ProfileFragment
 import com.realityexpander.vinder.fragments.SwipeFragment
-import com.realityexpander.vinder.utils.DATA_USERS_COLLECTION
 
 // Tab & Fragment Id's
 private enum class FragmentId {
@@ -26,10 +23,10 @@ private enum class FragmentId {
     MATCHES_LIST,
 }
 
-data class TabLayouts (
-    val profileTab: TabLayout.Tab,
-    val swipeTab: TabLayout.Tab,
-    val matchesTab: TabLayout.Tab
+data class VinderTabLayout (
+    val profileTab: TabLayout.Tab = TabLayout.Tab(),
+    val swipeTab: TabLayout.Tab= TabLayout.Tab(),
+    val matchesTab: TabLayout.Tab = TabLayout.Tab()
 )
 
 class VinderActivity : AppCompatActivity(), HostContextI {
@@ -42,6 +39,8 @@ class VinderActivity : AppCompatActivity(), HostContextI {
     private var profileFragment: ProfileFragment? = null
     private var swipeFragment: SwipeFragment? = null
     private var matchesFragment: MatchesFragment? = null
+
+    private var tabLayout = VinderTabLayout()
 
     companion object {
         fun newIntent(context: Context?) = Intent(context, VinderActivity::class.java)
@@ -57,32 +56,29 @@ class VinderActivity : AppCompatActivity(), HostContextI {
         }
 
         // Setup tabs
-        val (profileTab,
-             swipeTab,
-             matchesTab) = setupTabs()
+        tabLayout = setupVinderTabs()
 
         bind.navigationTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
+            override fun onTabReselected(tab: TabLayout.Tab) {
                 onTabSelected(tab)
             }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabSelected(tab: TabLayout.Tab?) {
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab) {
-                    profileTab -> {
+                    tabLayout.profileTab -> {
                         if (profileFragment == null) {
                             profileFragment = ProfileFragment()
-                            // profileFragment!!.onUpdateUI()
                         }
                         replaceFragment(profileFragment!!)
                     }
-                    swipeTab -> {
+                    tabLayout.swipeTab -> {
                         if (swipeFragment == null) {
                             swipeFragment = SwipeFragment()
                             swipeFragment!!.onUpdateUI()
                         }
                         replaceFragment(swipeFragment!!)
                     }
-                    matchesTab -> {
+                    tabLayout.matchesTab -> {
                         if (matchesFragment == null) {
                             matchesFragment = MatchesFragment()
                             matchesFragment!!.onUpdateUI()
@@ -94,10 +90,10 @@ class VinderActivity : AppCompatActivity(), HostContextI {
         })
         bind.navigationTabs.setTabIconTintResource(R.color.tab_item) // tint the icons black and red
 
-        profileTab.select()
+        tabLayout.profileTab.select()
     }
 
-    private fun setupTabs(): TabLayouts {
+    private fun setupVinderTabs(): VinderTabLayout {
         val profileTab = bind.navigationTabs.newTab()
         val swipeTab = bind.navigationTabs.newTab()
         val matchesTab = bind.navigationTabs.newTab()
@@ -110,7 +106,7 @@ class VinderActivity : AppCompatActivity(), HostContextI {
         bind.navigationTabs.addTab(swipeTab)
         bind.navigationTabs.addTab(matchesTab)
 
-        return TabLayouts(profileTab, swipeTab, matchesTab)
+        return VinderTabLayout(profileTab, swipeTab, matchesTab)
     }
 
     fun replaceFragment(fragment: Fragment) {
@@ -123,6 +119,10 @@ class VinderActivity : AppCompatActivity(), HostContextI {
         firebaseAuth.signOut()
         startActivity(StartupActivity.newIntent(this))
         finish()
+    }
+
+    override fun profileComplete() {
+        tabLayout.swipeTab.select()
     }
 
     override fun onAndroidFragmentCreated(fragment: BaseFragment) {
