@@ -23,6 +23,12 @@ private enum class FragmentId {
     MATCHES_LIST,
 }
 
+data class TabLayouts (
+    val profileTab: TabLayout.Tab,
+    val swipeTab: TabLayout.Tab,
+    val matchesTab: TabLayout.Tab
+)
+
 class VinderActivity : AppCompatActivity(), HostContextI {
 
     private lateinit var bind: ActivityVinderBinding
@@ -83,12 +89,12 @@ class VinderActivity : AppCompatActivity(), HostContextI {
                 }
             }
         })
-        bind.navigationTabs.setTabIconTintResource(R.color.tab_item)
+        bind.navigationTabs.setTabIconTintResource(R.color.tab_item) // tint the icons black and red
 
         profileTab.select()
     }
 
-    private fun setupTabs(): Triple<TabLayout.Tab, TabLayout.Tab, TabLayout.Tab> {
+    private fun setupTabs(): TabLayouts {
         val profileTab = bind.navigationTabs.newTab()
         val swipeTab = bind.navigationTabs.newTab()
         val matchesTab = bind.navigationTabs.newTab()
@@ -101,7 +107,7 @@ class VinderActivity : AppCompatActivity(), HostContextI {
         bind.navigationTabs.addTab(swipeTab)
         bind.navigationTabs.addTab(matchesTab)
 
-        return Triple(profileTab, swipeTab, matchesTab)
+        return TabLayouts(profileTab, swipeTab, matchesTab)
     }
 
     fun replaceFragment(fragment: Fragment) {
