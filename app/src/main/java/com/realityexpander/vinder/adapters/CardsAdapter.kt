@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.realityexpander.vinder.R
+import com.realityexpander.vinder.activities.UserInfoActivity
 import com.realityexpander.vinder.models.User
 import com.realityexpander.vinder.utils.isNotNullAndNotEmpty
 import com.realityexpander.vinder.utils.loadUrl
@@ -31,7 +32,7 @@ class CardsAdapter(context: Context?, resourceId: Int, users: List<User>):
         profileImageIv.loadUrl(user?.profileImageUrl)
 
         userInfoLayout.setOnClickListener {
-//            finalView.context.startActivity(UserInfoActivity.newIntent(finalView.context, user.uid))
+            finalView.context.startActivity(UserInfoActivity.newIntent(finalView.context, user!!.uid))
         }
 
         return finalView

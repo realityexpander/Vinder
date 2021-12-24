@@ -22,4 +22,4 @@ val DATA_CHAT_MESSAGES = "Messages"
 
 
 // ------- IMAGE STORAGE --------
-const val DATA_IMAGE_STORAGE_PROFILE_IMAGES="profileImage"
+const val DATA_IMAGE_STORAGE_PROFILE_IMAGES = "profileImage"
