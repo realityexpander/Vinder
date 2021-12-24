@@ -73,6 +73,8 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
     override fun onUpdateUI() {
         if (!isAdded) return
 
+        chatsAdapter.clear()
+
         // Get all the chats for this userId
         userDatabase.child(userId)
             .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)

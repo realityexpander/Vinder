@@ -238,28 +238,28 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         userDatabase.orderByChild(DATA_USER_GENDER)
             .equalTo(preferredGender)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {}
+                override fun onCancelled(error: DatabaseError) {}
 
-                override fun onDataChange(queryResult: DataSnapshot) {
-                    queryResult.children.forEach { child ->
-                        val swipeUser = child.getValue(User::class.java)
+                override fun onDataChange(potentialUserMatchDoc: DataSnapshot) {
+                    potentialUserMatchDoc.children.forEach { potentialUserMatch ->
+                        val potentialUser = potentialUserMatch.getValue(User::class.java)
 
-                        if (swipeUser != null) {
+                        if (potentialUser != null) {
                             var showUser = true
 
                             // has this swipeUser already been matched or they swiped left on this user?
-                            if (child.child(DATA_USER_SWIPE_LEFT_USER_IDS)
+                            if (potentialUserMatch.child(DATA_USER_SWIPE_LEFT_USER_IDS)
                                     .hasChild(userId)
 //                                || child.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
 //                                    .hasChild(userId)
-                                || child.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+                                || potentialUserMatch.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                     .hasChild(userId)
                             ) {
                                 showUser = false
                             }
 
                             if (showUser) {
-                                rowItems.add(swipeUser)
+                                rowItems.add(potentialUser)
                                 cardsAdapter?.notifyDataSetChanged()
                             }
                         }

@@ -18,6 +18,10 @@ class ChatsAdapter(private var chats: ArrayList<Chat>) :
         notifyDataSetChanged()
     }
 
+    fun clear() {
+        chats.clear()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) =
         ChatsViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
