@@ -1,11 +1,11 @@
 package com.realityexpander.vinder.models
 
 data class Chat(
-    val userId: String? = "",
     val chatId: String? = "",
-    val otherUserId: String? = "",
-    val name: String? = "",
-    val imageUrl: String? = ""
+    val userId: String? = "",
+    val matchedUserId: String? = "",
+    val username: String? = "",
+    val profileImageUrl: String? = ""
 )
 
 data class Message(

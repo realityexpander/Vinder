@@ -198,7 +198,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
             .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
             .removeValue()
 
-        // Remove all the match chats for this user
+        // Remove all the match Chats for this user
         userDatabase.child(userId)
             .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -206,36 +206,39 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                 }
 
                 override fun onDataChange(matchUserIdToChatIds: DataSnapshot) {
+
+                    // Remove all this user's Chats from this user and the matched users as well
                     matchUserIdToChatIds.children.forEach { matchUserIdToChatId ->
                         val matchUserId = matchUserIdToChatId.key.toString()
-                        val matchChatId = matchUserIdToChatId.value.toString()
+                        val chatId = matchUserIdToChatId.value.toString()
 
-                        // remove this user's userId from the list of matches of the matchUserId user
+                        // Remove this user's userId from the list of matches of the matchUserId user
                         userDatabase.child(matchUserId)
                             .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                             .child(userId)
                             .removeValue()
 
-                        // remove the chat for this match pair
-                        chatDatabase.child(matchChatId)
+                        // Remove the chat for this match pair
+                        chatDatabase.child(chatId)
                             .removeValue()
 
-                        // Remove the matchUser userId from this user
+                        // Remove the matchedUserId userId from this user's Chat list
                         userDatabase.child(userId)
                             .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                             .child(matchUserId)
                             .removeValue()
                     }
 
+                    // Remove ALL the Matched userIds
+                    userDatabase.child(userId)
+                        .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+                        .child(userId)
+                        .removeValue()
+
                     Toast.makeText(context, "Matches cleared.", Toast.LENGTH_SHORT).show()
                 }
             })
 
-        // Remove the Match userIds
-        userDatabase.child(userId)
-            .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
-            .child(userId)
-            .removeValue()
     }
 
     private var imagePickerResultCallback: (uri: Uri) -> Unit = {}
