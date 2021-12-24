@@ -21,7 +21,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.realityexpander.vinder.HostContextI
 import com.realityexpander.vinder.R
-import com.realityexpander.vinder.activities.VinderActivity
 import com.realityexpander.vinder.databinding.FragmentProfileBinding
 import com.realityexpander.vinder.interfaces.UpdateUiI
 import com.realityexpander.vinder.models.User
@@ -86,6 +85,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
 
         bind.progressLayout.setOnTouchListener{ _, _ -> true }
         bind.applyButton.setOnClickListener { onApply() }
+        bind.clearMatchesButton.setOnClickListener { onClearMatchesAndSwipes() }
         bind.signoutButton.setOnClickListener { (activity as HostContextI).onSignout() }
 
         // Setup image picker (must be setup before onResume/onStart)
@@ -191,20 +191,49 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
         // Remove the SwipeLeft userIds
         userDatabase.child(userId)
             .child(DATA_USER_SWIPE_LEFT_USER_IDS)
-            .child(userId)
             .removeValue()
 
         // Remove the SwipeRight userIds
         userDatabase.child(userId)
             .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
-            .child(userId)
             .removeValue()
 
-        // Remove the match chats for this user
+        // Remove all the match chats for this user
+        userDatabase.child(userId)
+            .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                }
+
+                override fun onDataChange(matchUserIdToChatIds: DataSnapshot) {
+                    matchUserIdToChatIds.children.forEach { matchUserIdToChatId ->
+                        val matchUserId = matchUserIdToChatId.key.toString()
+                        val matchChatId = matchUserIdToChatId.value.toString()
+
+                        // remove this user's userId from the list of matches of the matchUserId user
+                        userDatabase.child(matchUserId)
+                            .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+                            .child(userId)
+                            .removeValue()
+
+                        // remove the chat for this match pair
+                        chatDatabase.child(matchChatId)
+                            .removeValue()
+
+                        // Remove the matchUser userId from this user
+                        userDatabase.child(userId)
+                            .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+                            .child(matchUserId)
+                            .removeValue()
+                    }
+
+                    Toast.makeText(context, "Matches cleared.", Toast.LENGTH_SHORT).show()
+                }
+            })
 
         // Remove the Match userIds
         userDatabase.child(userId)
-            .child(DATA_USER_MATCH_USER_IDS)
+            .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
             .child(userId)
             .removeValue()
     }

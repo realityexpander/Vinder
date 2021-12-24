@@ -37,6 +37,11 @@
         <item name="backgroundTint">@null</item>
     </style>
 
+    <style name="DangerButton" parent="StandardButton">
+        <item name="android:background">@drawable/standard_button_rounded_grey</item>
+        <item name="backgroundTint">@color/red</item>
+    </style>
+
     <style name="SendButton">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/standard_button_text_size</item>

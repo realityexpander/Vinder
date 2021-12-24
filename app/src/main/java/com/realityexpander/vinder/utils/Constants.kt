@@ -12,7 +12,7 @@ const val PREFERENCE_GENDER_FEMALE = "female"
 const val DATA_USER_PROFILE_IMAGE_URL = "profileImageUrl"
 const val DATA_USER_SWIPE_LEFT_USER_IDS = "swipeLeftUserIds"
 const val DATA_USER_SWIPE_RIGHT_USER_IDS = "swipeRightUserIds"
-const val DATA_USER_MATCH_USER_IDS = "matchUserIds"
+const val DATA_USER_MATCH_USER_ID_TO_CHAT_IDS = "matchUserIdToChatIds"
 
 
 // ------- CHATS COLLECTION ---------

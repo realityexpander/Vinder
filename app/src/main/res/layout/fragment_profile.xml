@@ -166,11 +166,19 @@
                         android:text="@string/button_apply" />
 
                 <Button
+                        android:id="@+id/clearMatchesButton"
+                        style="@style/DangerButton"
+                        android:layout_width="@dimen/standard_width"
+                        android:layout_height="@dimen/standard_height"
+                        android:layout_below="@id/applyButton"
+                        android:text="@string/button_clear_matches" />
+
+                <Button
                         android:id="@+id/signoutButton"
                         style="@style/StandardButtonGrey"
                         android:layout_width="@dimen/standard_width"
                         android:layout_height="@dimen/standard_height"
-                        android:layout_below="@id/applyButton"
+                        android:layout_below="@id/clearMatchesButton"
                         android:text="@string/button_sign_out" />
 
             </RelativeLayout>
@@ -182,6 +190,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/darkGrey"
+                android:visibility="invisible"
                 android:gravity="center">
 
             <ProgressBar

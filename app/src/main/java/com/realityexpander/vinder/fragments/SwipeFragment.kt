@@ -149,43 +149,50 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         swipedRightUserId: String,
         swipedRightUser: User
     ) {
-        userDatabase.child(currentUserId)
+        // If the swipedRight user has also swipedRight on the currentUserId, then there is a MATCH!
+        userDatabase.child(swipedRightUserId)
             .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                 }
 
                 override fun onDataChange(swipeRightUserIds: DataSnapshot) {
-                    if (swipeRightUserIds.hasChild(swipedRightUserId)) {
+                    if (swipeRightUserIds.hasChild(currentUserId)) {
                         Toast.makeText(context, "Match!", Toast.LENGTH_SHORT).show()
 
                         // create new matchChat document
                         val matchChatId = chatDatabase.push().key
 
                         if (matchChatId != null) {
-                            // -----------------------------------------------------
-                            // ------ Setup the match for the matched users --------
-                            // -----------------------------------------------------
-                            // Add the swipedRight userId to the current user's list of swipedRight userIds
+
+                            // ----------------------------------------------------------
+                            // ------ Remove this user from the swipedRight users -------
+                            // ----------------------------------------------------------
+                            // Remove the old swipedRight userId from the current user's list of swipedRight userIds
                             userDatabase.child(currentUserId)
                                 .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
                                 .child(swipedRightUserId)
                                 .removeValue()
 
+                            // -----------------------------------------------------
+                            // ------ Add the match for the Matched users ----------
+                            // -----------------------------------------------------
                             // Add the swipedRight userId to the current user's list of matched userIds
+                            //   & set the MatchChatId
                             userDatabase.child(currentUserId)
-                                .child(DATA_USER_MATCH_USER_IDS)
+                                .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                 .child(swipedRightUserId)
                                 .setValue(matchChatId)
                             // Add the current userId to the swipedRight user's list of matched userIds
+                            //   & set the MatchChatId
                             userDatabase.child(swipedRightUserId)
-                                .child(DATA_USER_MATCH_USER_IDS)
+                                .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                 .child(currentUserId)
                                 .setValue(matchChatId)
 
-                            // --------------------------------
-                            // ----- Setup the match chat -----
-                            // --------------------------------
+                            // ----------------------------------------------------
+                            // ----- Add the match chat for this matched pair -----
+                            // ----------------------------------------------------
                             // Add the current user's username to the Match Chat
                             chatDatabase.child(matchChatId)
                                 .child(currentUserId)
@@ -209,10 +216,10 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                                 .setValue(swipedRightUser.profileImageUrl)
                         }
                     } else {
-                        // Add the current userId to the swipedRight user's list of swiped right userIds
-                        userDatabase.child(swipedRightUserId)
+                        // Add the swipedRight userId to the current user's list of swiped right userIds
+                        userDatabase.child(currentUserId)
                             .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
-                            .child(currentUserId)
+                            .child(swipedRightUserId)
                             .setValue(true)
                     }
                 }
@@ -240,12 +247,12 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                         if (swipeUser != null) {
                             var showUser = true
 
-                            // has this swipeUser already been swiped?
+                            // has this swipeUser already been matched or they swiped left on this user?
                             if (child.child(DATA_USER_SWIPE_LEFT_USER_IDS)
                                     .hasChild(userId)
-                                || child.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
-                                    .hasChild(userId)
-                                || child.child(DATA_USER_MATCH_USER_IDS)
+//                                || child.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+//                                    .hasChild(userId)
+                                || child.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                     .hasChild(userId)
                             ) {
                                 showUser = false

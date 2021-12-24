@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.realityexpander.vinder.R
 import com.realityexpander.vinder.models.User
+import com.realityexpander.vinder.utils.isNotNullAndNotEmpty
 import com.realityexpander.vinder.utils.loadUrl
 
 class CardsAdapter(context: Context?, resourceId: Int, users: List<User>):
@@ -24,7 +25,9 @@ class CardsAdapter(context: Context?, resourceId: Int, users: List<User>):
         val profileImageIv = finalView.findViewById<ImageView>(R.id.cardProfileImageIv)
         val nameInfoTv = finalView.findViewById<TextView>(R.id.cardNameTV)
 
-        "${user?.username}, ${user?.age}".also { nameInfoTv.text = it }
+        val nameInfoString = "${user?.username}" +
+                if(user?.age.isNotNullAndNotEmpty()) ", ${user?.age}" else ""
+        nameInfoTv.text = nameInfoString
         profileImageIv.loadUrl(user?.profileImageUrl)
 
         userInfoLayout.setOnClickListener {
