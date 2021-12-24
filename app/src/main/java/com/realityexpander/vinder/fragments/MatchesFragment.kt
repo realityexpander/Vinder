@@ -17,7 +17,6 @@ import com.realityexpander.vinder.databinding.FragmentMatchesBinding
 import com.realityexpander.vinder.interfaces.UpdateUiI
 import com.realityexpander.vinder.models.Chat
 import com.realityexpander.vinder.models.User
-import com.realityexpander.vinder.utils.DATA_CHATS_COLLECTION
 import com.realityexpander.vinder.utils.DATA_USERS_COLLECTION
 import com.realityexpander.vinder.utils.DATA_USER_MATCH_USER_ID_TO_CHAT_IDS
 import com.realityexpander.vinder.utils.isNotNullAndNotEmpty
@@ -35,15 +34,16 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val userId = firebaseAuth.currentUser?.uid!!
-    private val userDatabase = FirebaseDatabase.getInstance().reference.child(DATA_USERS_COLLECTION)
-    private val chatDatabase = FirebaseDatabase.getInstance().reference.child(DATA_CHATS_COLLECTION)
+    private val userDatabase = FirebaseDatabase.getInstance()
+        .reference
+        .child(DATA_USERS_COLLECTION)
 
     private val chatsAdapter = ChatsAdapter(ArrayList())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _bind = FragmentMatchesBinding.inflate(inflater, container, false)
         return bind.root
@@ -96,14 +96,14 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onCancelled(error: DatabaseError) {}
 
-                                        override fun onDataChange(matchUserIdDoc: DataSnapshot) {
-                                            val matchUser = matchUserIdDoc.getValue(User::class.java)
+                                        override fun onDataChange(matchUserDoc: DataSnapshot) {
+                                            val matchUser = matchUserDoc.getValue(User::class.java)
 
-                                            // Add the matched user info to the Chat list
+                                            // Add the matched user chat to the Chat list
                                             if (matchUser != null) {
                                                 val chat = Chat(
-                                                    userId,
                                                     chatId,
+                                                    userId,
                                                     matchUser.uid,
                                                     matchUser.username,
                                                     matchUser.profileImageUrl

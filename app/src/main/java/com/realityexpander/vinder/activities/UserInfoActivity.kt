@@ -13,8 +13,6 @@ import com.realityexpander.vinder.models.User
 import com.realityexpander.vinder.utils.DATA_USERS_COLLECTION
 import com.realityexpander.vinder.utils.loadUrl
 
-const val USER_INFO_PARAM_USER_ID = "User id"
-
 class UserInfoActivity : AppCompatActivity() {
     private lateinit var bind: ActivityUserInfoBinding
 
@@ -47,6 +45,8 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val USER_INFO_PARAM_USER_ID = "User id"
+
         fun newIntent(context: Context, userId: String?): Intent {
             val intent = Intent(context, UserInfoActivity::class.java)
             intent.putExtra(USER_INFO_PARAM_USER_ID, userId)

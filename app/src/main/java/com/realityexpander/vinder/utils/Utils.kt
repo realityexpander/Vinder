@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun ImageView.loadUrl(url: String?, errorDrawable: Int = R.drawable.empty) {
     if (url.isNullOrEmpty()) return

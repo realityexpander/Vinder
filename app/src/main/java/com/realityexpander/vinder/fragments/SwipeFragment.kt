@@ -140,8 +140,8 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
             override fun onScroll(scrollAmount: Float) {}
         })
 
-        // No taps on the frame
-        bind.frame.setOnItemClickListener { position, data -> }
+        // Block taps on the frame
+        bind.frame.setOnItemClickListener { _, _ -> }
     }
 
     private fun addMatch(

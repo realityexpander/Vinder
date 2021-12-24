@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.realityexpander.vinder.R
+import com.realityexpander.vinder.activities.ChatActivity
 import com.realityexpander.vinder.models.Chat
 import com.realityexpander.vinder.utils.loadUrl
 
@@ -46,15 +47,15 @@ class ChatsAdapter(private var chats: ArrayList<Chat>) :
             }
 
             layout.setOnClickListener {
-//                view.context.startActivity(
-//                    ChatActivity.newIntent(
-//                        view.context,
-//                        chat.chatId,
-//                        chat.userId,
-//                        chat.profileImageUrl,
-//                        chat.matchedUserId
-//                    )
-//                )
+                view.context.startActivity(
+                    ChatActivity.newIntent(
+                        view.context,
+                        chat.chatId,
+                        chat.userId,
+                        chat.matchedUserId,
+                        chat.profileImageUrl
+                    )
+                )
             }
         }
 

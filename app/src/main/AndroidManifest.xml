@@ -10,9 +10,11 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.Vinder.NoActionBar">
         <activity
-                android:name=".activities.UserInfoActivity"
+                android:name=".activities.ChatActivity"
                 android:exported="false" />
-        <!-- <activity android:name=".activities.ChatActivity"> -->
+        <activity
+                android:name=".activities.UserInfoActivity"
+                android:exported="false" /> <!-- <activity android:name=".activities.ChatActivity"> -->
         <!-- </activity> -->
         <!-- <activity android:name=".activities.UserInfoActivity"> -->
         <!-- </activity> -->
