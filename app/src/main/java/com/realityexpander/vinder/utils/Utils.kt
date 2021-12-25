@@ -2,6 +2,7 @@ package com.realityexpander.vinder.utils
 
 import android.content.Context
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -56,4 +57,14 @@ fun loadImage(view: ImageView, url: String?) {
 // opposite of isNullOrEmpty()
 fun CharSequence?.isNotNullAndNotEmpty(): Boolean {
     return this != null && this.isNotEmpty()
+}
+
+fun simpleMessageDialog(context: Context, message: String) {
+    AlertDialog.Builder(
+        context,
+        com.google.android.material.R.style.Base_Theme_MaterialComponents_Dialog
+    )
+        .setTitle(message)
+        .setPositiveButton("OK") { _, _ -> }
+        .show()
 }

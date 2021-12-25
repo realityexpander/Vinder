@@ -1,5 +1,7 @@
 package com.realityexpander.vinder.fragments
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -216,6 +218,8 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                                 .child(swipedRightUserId)
                                 .child(DATA_USER_PROFILE_IMAGE_URL)
                                 .setValue(swipedRightUser.profileImageUrl)
+
+                            simpleMessageDialog(requireContext(), "You have matched with this person!")
                         }
                     } else {
                         // Add the swipedRight userId to the currentUserId's list of swiped right userIds
