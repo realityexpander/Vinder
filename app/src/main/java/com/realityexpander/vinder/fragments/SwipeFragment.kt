@@ -165,25 +165,32 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
 
                         if (matchChatId != null) {
 
-                            // ----------------------------------------------------------
-                            // ------ Remove this user from the swipedRight users -------
-                            // ----------------------------------------------------------
-                            // Remove the old swipedRight userId from the current user's list of swipedRight userIds
+                            // ---------------------------------------------------------------------
+                            // ------ Remove this user & matched user from swipedRight users -------
+                            // ---------------------------------------------------------------------
+                            // Remove the old swipedRightUserId from the currentUserId's list of swipedRight userIds
                             userDatabase.child(currentUserId)
                                 .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
                                 .child(swipedRightUserId)
                                 .removeValue()
 
-                            // -----------------------------------------------------
-                            // ------ Add the match for the Matched users ----------
-                            // -----------------------------------------------------
-                            // Add the swipedRight userId to the current user's list of matched userIds
+                            // Remove the the currentUserId from the matched user's list of swipedRight userIds
+                            userDatabase.child(swipedRightUserId)
+                                .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+                                .child(currentUserId)
+                                .removeValue()
+
+                            // --------------------------------------------------
+                            // ------ Add the match for the Matched users -------
+                            // --------------------------------------------------
+                            // Add the swipedRightUserId to the current user's list of matched userIds
                             //   & set the MatchChatId
                             userDatabase.child(currentUserId)
                                 .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                 .child(swipedRightUserId)
                                 .setValue(matchChatId)
-                            // Add the current userId to the swipedRight user's list of matched userIds
+
+                            // Add the currentUserId to the swipedRightUserId's list of matched userIds
                             //   & set the MatchChatId
                             userDatabase.child(swipedRightUserId)
                                 .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
@@ -193,23 +200,23 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                             // ----------------------------------------------------
                             // ----- Add the match chat for this matched pair -----
                             // ----------------------------------------------------
-                            // Add the current user's username to the Match Chat
+                            // Add the currentUserId's username to the Match Chat
                             chatDatabase.child(matchChatId)
                                 .child(currentUserId)
                                 .child(DATA_USER_USERNAME)
                                 .setValue(username)
-                            // Add the current user's profile image to the Match Chat
+                            // Add the currentUserId's profile image to the Match Chat
                             chatDatabase.child(matchChatId)
                                 .child(currentUserId)
                                 .child(DATA_USER_PROFILE_IMAGE_URL)
                                 .setValue(userProfileImageUrl)
 
-                            // Add the swipedRight user's username to the Match Chat
+                            // Add the swipedRightUserId's username to the Match Chat
                             chatDatabase.child(matchChatId)
                                 .child(swipedRightUserId)
                                 .child(DATA_USER_USERNAME)
                                 .setValue(swipedRightUser.username)
-                            // Add the swipedRight user's profile image to the Match Chat
+                            // Add the swipedRightUserId's profile image to the Match Chat
                             chatDatabase.child(matchChatId)
                                 .child(swipedRightUserId)
                                 .child(DATA_USER_PROFILE_IMAGE_URL)

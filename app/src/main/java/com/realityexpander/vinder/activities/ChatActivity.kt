@@ -70,7 +70,6 @@ class ChatActivity : AppCompatActivity() {
         if (chatId.isEmpty()
             || userId.isEmpty()
             || matchUserId.isEmpty()
-//            || profileImageUrl.isNullOrEmpty()
         ) {
             Toast.makeText(this, "Chat room error", Toast.LENGTH_SHORT).show()
             finish()
@@ -92,32 +91,6 @@ class ChatActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
             adapter = messagesAdapter
         }
-
-//        // Add all match user info
-//        chatDatabase.child(chatId)
-//            .addListenerForSingleValueEvent(object: ValueEventListener {
-//            override fun onCancelled(error: DatabaseError) {}
-//
-//            override fun onDataChange(chatMembersDoc: DataSnapshot) {
-//                chatMembersDoc.children.forEach { chatMember ->
-//                    val memberUserId = chatMember.key  ?: ""
-//                    val user = chatMember.getValue(User::class.java) // only getting profileImageUrl & username
-//
-//                    // Fill out the matches profile info
-//                    if(memberUserId != userId) {
-//                        bind.usernameTv.text = user?.username.toString()
-//                        if(user?.username.isNotNullAndNotEmpty()) matchUsername = user?.username.toString()
-//
-//                        bind.profileImageIv.loadUrl(user?.profileImageUrl)
-//                        if(user?.profileImageUrl.isNotNullAndNotEmpty()) matchProfileImageUrl = user?.profileImageUrl
-//
-//                        bind.profileImageIv.setOnClickListener {
-//                            startActivity(UserInfoActivity.newIntent(this@ChatActivity, matchUserId))
-//                        }
-//                    }
-//                }
-//            }
-//        })
 
         // Add listener for new messages
         chatDatabase.child(chatId)
