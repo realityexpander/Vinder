@@ -35,7 +35,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         .child(DATA_CHATS_COLLECTION)
 
     private var cardsAdapter: ArrayAdapter<User>? = null
-    private var rowItems = ArrayList<User>()
+    private var cardSwipeItems = ArrayList<User>()
 
     private var preferredGender: String? = null
     private var username: String? = null
@@ -80,20 +80,20 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
             })
 
         // Setup the cards adapter
-        cardsAdapter = CardsAdapter(context, R.layout.item_card, rowItems)
+        cardsAdapter = CardsAdapter(context, R.layout.item_card, cardSwipeItems)
         bind.frame.adapter = cardsAdapter
         setupFlingAdapter()
 
         // Setup Like button
         bind.likeButton.setOnClickListener {
-            if (rowItems.isNotEmpty()) {
+            if (cardSwipeItems.isNotEmpty()) {
                 bind.frame.topCardListener.selectRight()
             }
         }
 
         // Setup dislike button
         bind.dislikeButton.setOnClickListener {
-            if (rowItems.isNotEmpty()) {
+            if (cardSwipeItems.isNotEmpty()) {
                 bind.frame.topCardListener.selectLeft()
             }
         }
@@ -103,21 +103,21 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         bind.frame.setFlingListener(object : SwipeFlingAdapterView.onFlingListener {
 
             override fun removeFirstObjectInAdapter() {
-                rowItems.removeAt(0)
+                cardSwipeItems.removeAt(0)
                 cardsAdapter?.notifyDataSetChanged()
             }
 
-            override fun onLeftCardExit(selectedUserItem: Any?) {
-                val user = selectedUserItem as User
+            override fun onLeftCardExit(swipedLeftUserItem: Any?) {
+                val swipedLeftUserId = (swipedLeftUserItem as User).uid!!
 
-                // Add the swipedLeft userId to the current user's list of swipedLeft userIds
-                userDatabase.child(user.uid.toString())
-                    .child(DATA_USER_SWIPE_LEFT_USER_IDS)
-                    .child(userId)
+                // Add the swipedLeftUserId to the current user's list of swipedLeft userIds
+                userDatabase.child(userId)
+                    .child(DATA_USER_SWIPED_LEFT_USER_IDS)
+                    .child(swipedLeftUserId)
                     .setValue(true)
 
                 // Notify there are no more users to swipe
-                if (rowItems.isEmpty()) {
+                if (cardSwipeItems.isEmpty()) {
                     bind.noUsersLayout.visibility = View.VISIBLE
                 }
             }
@@ -131,7 +131,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                 }
 
                 // Notify there are no more users to swipe
-                if (rowItems.isEmpty()) {
+                if (cardSwipeItems.isEmpty()) {
                     bind.noUsersLayout.visibility = View.VISIBLE
                 }
             }
@@ -151,10 +151,9 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
     ) {
         // If the swipedRight user has also swipedRight on the currentUserId, then there is a MATCH!
         userDatabase.child(swipedRightUserId)
-            .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+            .child(DATA_USER_SWIPED_RIGHT_USER_IDS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                }
+                override fun onCancelled(error: DatabaseError) {}
 
                 override fun onDataChange(swipeRightUserIds: DataSnapshot) {
                     if (swipeRightUserIds.hasChild(currentUserId)) {
@@ -164,19 +163,18 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                         val matchChatId = chatDatabase.push().key
 
                         if (matchChatId != null) {
-
                             // ---------------------------------------------------------------------
                             // ------ Remove this user & matched user from swipedRight users -------
                             // ---------------------------------------------------------------------
                             // Remove the old swipedRightUserId from the currentUserId's list of swipedRight userIds
                             userDatabase.child(currentUserId)
-                                .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+                                .child(DATA_USER_SWIPED_RIGHT_USER_IDS)
                                 .child(swipedRightUserId)
                                 .removeValue()
 
                             // Remove the the currentUserId from the matched user's list of swipedRight userIds
                             userDatabase.child(swipedRightUserId)
-                                .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+                                .child(DATA_USER_SWIPED_RIGHT_USER_IDS)
                                 .child(currentUserId)
                                 .removeValue()
 
@@ -223,9 +221,9 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                                 .setValue(swipedRightUser.profileImageUrl)
                         }
                     } else {
-                        // Add the swipedRight userId to the current user's list of swiped right userIds
+                        // Add the swipedRight userId to the currentUserId's list of swiped right userIds
                         userDatabase.child(currentUserId)
-                            .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+                            .child(DATA_USER_SWIPED_RIGHT_USER_IDS)
                             .child(swipedRightUserId)
                             .setValue(true)
                     }
@@ -236,49 +234,75 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
     override fun onUpdateUI() {
         if (!isAdded) return
 
+        val currentUserSwipedUserIds = ArrayList<String>()
+
         bind.noUsersLayout.visibility = View.GONE
         bind.progressLayout.visibility = View.VISIBLE
 
-        rowItems.clear()
+        cardSwipeItems.clear()
 
-        // Query all users of the preferred gender
-        userDatabase.orderByChild(DATA_USER_GENDER)
-            .equalTo(preferredGender)
+        // 2. Query all users of the preferred gender
+        fun queryUsersForPreferredGenderAndAddToCards(currentUserSwipedRightUserIds: ArrayList<String>) {
+            userDatabase.orderByChild(DATA_USER_GENDER)
+                .equalTo(preferredGender)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {}
+
+                    override fun onDataChange(potentialUserMatchDoc: DataSnapshot) {
+                        potentialUserMatchDoc.children.forEach { potentialUserMatch ->
+                            val potentialUser = potentialUserMatch.getValue(User::class.java)
+
+                            if (potentialUser != null) {
+                                var showUser = true
+
+                                // has this potentialUser already been matched or swiped left on the current user?
+                                if (potentialUserMatch.child(DATA_USER_SWIPED_LEFT_USER_IDS)
+                                        .hasChild(userId)
+        //                                || potentialUserMatch.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+        //                                    .hasChild(userId)
+                                    || potentialUserMatch.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+                                        .hasChild(userId)
+                                ) {
+                                    showUser = false
+                                }
+
+                                // Exclude all users that the current user has already swiped on
+                                if (currentUserSwipedRightUserIds.contains(potentialUser.uid)) {
+                                    showUser = false
+                                }
+
+                                if (showUser) {
+                                    cardSwipeItems.add(potentialUser)
+                                    cardsAdapter?.notifyDataSetChanged()
+                                }
+                            }
+                        }
+                        bind.progressLayout.visibility = View.GONE
+
+                        // Notify there are no more users to swipe
+                        if (cardSwipeItems.isEmpty()) {
+                            bind.noUsersLayout.visibility = View.VISIBLE
+                        }
+                    }
+                })
+        }
+
+        // 1. Get all the users that this userId have already swiped on
+        userDatabase.child(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
 
-                override fun onDataChange(potentialUserMatchDoc: DataSnapshot) {
-                    potentialUserMatchDoc.children.forEach { potentialUserMatch ->
-                        val potentialUser = potentialUserMatch.getValue(User::class.java)
+                override fun onDataChange(userDoc: DataSnapshot) {
+                    val user = userDoc.getValue(User::class.java)!!
 
-                        if (potentialUser != null) {
-                            var showUser = true
+                    currentUserSwipedUserIds.addAll(user.swipeLeftUserIds.keys)
+                    currentUserSwipedUserIds.addAll(user.swipeRightUserIds.keys)
 
-                            // has this swipeUser already been matched or they swiped left on this user?
-                            if (potentialUserMatch.child(DATA_USER_SWIPE_LEFT_USER_IDS)
-                                    .hasChild(userId)
-//                                || child.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
-//                                    .hasChild(userId)
-                                || potentialUserMatch.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
-                                    .hasChild(userId)
-                            ) {
-                                showUser = false
-                            }
-
-                            if (showUser) {
-                                rowItems.add(potentialUser)
-                                cardsAdapter?.notifyDataSetChanged()
-                            }
-                        }
-                    }
-                    bind.progressLayout.visibility = View.GONE
-
-                    // Notify there are no more users to swipe
-                    if (rowItems.isEmpty()) {
-                        bind.noUsersLayout.visibility = View.VISIBLE
-                    }
+                    queryUsersForPreferredGenderAndAddToCards(currentUserSwipedUserIds)
                 }
             })
+
+
     }
 
 }

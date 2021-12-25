@@ -190,12 +190,12 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
     private fun onClearMatchesAndSwipes() {
         // Remove the SwipeLeft userIds
         userDatabase.child(userId)
-            .child(DATA_USER_SWIPE_LEFT_USER_IDS)
+            .child(DATA_USER_SWIPED_LEFT_USER_IDS)
             .removeValue()
 
         // Remove the SwipeRight userIds
         userDatabase.child(userId)
-            .child(DATA_USER_SWIPE_RIGHT_USER_IDS)
+            .child(DATA_USER_SWIPED_RIGHT_USER_IDS)
             .removeValue()
 
         // Remove all the match Chats for this user
