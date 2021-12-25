@@ -18,7 +18,8 @@ const val DATA_USER_MATCH_USER_ID_TO_CHAT_IDS = "matchUserIdToChatIds"
 // ------- CHATS COLLECTION ---------
 const val DATA_CHATS_COLLECTION = "Chats"
   // sub-collection: messages
-val DATA_CHAT_MESSAGES = "Messages"
+const val DATA_CHAT_MESSAGES = "Messages"
+const val DATA_CHAT_MESSAGES_TIME_LONG = "timeMsLong"
 
 
 // ------- IMAGE STORAGE --------

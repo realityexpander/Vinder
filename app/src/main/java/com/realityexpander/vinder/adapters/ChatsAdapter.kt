@@ -53,7 +53,8 @@ class ChatsAdapter(private var chats: ArrayList<Chat>) :
                         chat.chatId,
                         chat.userId,
                         chat.matchedUserId,
-                        chat.profileImageUrl
+                        chat.profileImageUrl,
+                        chat.username
                     )
                 )
             }

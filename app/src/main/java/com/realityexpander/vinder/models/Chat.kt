@@ -11,5 +11,6 @@ data class Chat(
 data class Message(
     val sentBy: String? = null,
     val message: String? = null,
-    val time: String? = null
+    val time: String? = null,
+    val timeMsLong: Long = 0L
 )

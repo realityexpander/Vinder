@@ -33,6 +33,9 @@
                     android:layout_height="@dimen/navigation_height"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:text="User Name"
+                    android:elevation="5dp"
                     android:paddingLeft="@dimen/chat_margin"/>
 
         </LinearLayout>

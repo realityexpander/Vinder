@@ -30,7 +30,7 @@
                         android:layout_height="158dp"
                         android:layout_marginTop="@dimen/startup_logo_margin"
                         android:layout_centerHorizontal="true"
-                        app:srcCompat="@drawable/tinder_clone_logo"
+                        app:srcCompat="@drawable/vinder_logo"
                         android:contentDescription="Logo" />
 
                 <com.google.android.material.textfield.TextInputLayout

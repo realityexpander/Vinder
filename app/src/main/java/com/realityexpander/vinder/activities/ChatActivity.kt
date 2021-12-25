@@ -13,10 +13,7 @@ import com.realityexpander.vinder.adapters.MessagesAdapter
 import com.realityexpander.vinder.databinding.ActivityChatBinding
 import com.realityexpander.vinder.models.Message
 import com.realityexpander.vinder.models.User
-import com.realityexpander.vinder.utils.DATA_CHATS_COLLECTION
-import com.realityexpander.vinder.utils.DATA_CHAT_MESSAGES
-import com.realityexpander.vinder.utils.isNotNullAndNotEmpty
-import com.realityexpander.vinder.utils.loadUrl
+import com.realityexpander.vinder.utils.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.contracts.ExperimentalContracts
@@ -31,6 +28,7 @@ class ChatActivity : AppCompatActivity() {
     private var userId: String = ""
     private var chatId: String = ""
     private var matchUserId: String = ""
+    private var matchUsername: String = ""
     private var matchProfileImageUrl: String? = null
 
     companion object {
@@ -38,19 +36,22 @@ class ChatActivity : AppCompatActivity() {
         private const val CHAT_PARAM_USER_ID = "User id"
         private const val CHAT_PARAM_MATCH_USER_ID = "Match user id"
         private const val CHAT_PARAM_MATCH_PROFILE_IMAGE_URL = "Profile Image url"
+        private const val CHAT_PARAM_MATCH_USERNAME = "Profile username"
 
         fun newIntent(
             context: Context?,
             chatId: String?,
             userId: String?,
             matchUserId: String?,
-            profileImageUrl: String?
+            matchProfileImageUrl: String?,
+            matchUsername: String?,
         ): Intent {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra(CHAT_PARAM_CHAT_ID, chatId)
             intent.putExtra(CHAT_PARAM_USER_ID, userId)
             intent.putExtra(CHAT_PARAM_MATCH_USER_ID, matchUserId)
-            intent.putExtra(CHAT_PARAM_MATCH_PROFILE_IMAGE_URL, profileImageUrl)
+            intent.putExtra(CHAT_PARAM_MATCH_PROFILE_IMAGE_URL, matchProfileImageUrl)
+            intent.putExtra(CHAT_PARAM_MATCH_USERNAME, matchUsername)
             return intent
         }
     }
@@ -65,6 +66,7 @@ class ChatActivity : AppCompatActivity() {
         userId = intent.extras?.getString(CHAT_PARAM_USER_ID) ?: ""
         matchUserId = intent.extras?.getString(CHAT_PARAM_MATCH_USER_ID) ?: ""
         matchProfileImageUrl = intent.extras?.getString(CHAT_PARAM_MATCH_PROFILE_IMAGE_URL)
+        matchUsername = intent.extras?.getString(CHAT_PARAM_MATCH_USERNAME) ?: ""
         if (chatId.isEmpty()
             || userId.isEmpty()
             || matchUserId.isEmpty()
@@ -74,7 +76,11 @@ class ChatActivity : AppCompatActivity() {
             finish()
         }
 
+        bind.usernameTv.text = matchUsername
         bind.profileImageIv.loadUrl(matchProfileImageUrl)
+        bind.profileImageIv.setOnClickListener {
+            startActivity(UserInfoActivity.newIntent(this@ChatActivity, matchUserId))
+        }
 
         chatDatabase = FirebaseDatabase.getInstance()
             .reference
@@ -87,42 +93,45 @@ class ChatActivity : AppCompatActivity() {
             adapter = messagesAdapter
         }
 
+//        // Add all match user info
+//        chatDatabase.child(chatId)
+//            .addListenerForSingleValueEvent(object: ValueEventListener {
+//            override fun onCancelled(error: DatabaseError) {}
+//
+//            override fun onDataChange(chatMembersDoc: DataSnapshot) {
+//                chatMembersDoc.children.forEach { chatMember ->
+//                    val memberUserId = chatMember.key  ?: ""
+//                    val user = chatMember.getValue(User::class.java) // only getting profileImageUrl & username
+//
+//                    // Fill out the matches profile info
+//                    if(memberUserId != userId) {
+//                        bind.usernameTv.text = user?.username.toString()
+//                        if(user?.username.isNotNullAndNotEmpty()) matchUsername = user?.username.toString()
+//
+//                        bind.profileImageIv.loadUrl(user?.profileImageUrl)
+//                        if(user?.profileImageUrl.isNotNullAndNotEmpty()) matchProfileImageUrl = user?.profileImageUrl
+//
+//                        bind.profileImageIv.setOnClickListener {
+//                            startActivity(UserInfoActivity.newIntent(this@ChatActivity, matchUserId))
+//                        }
+//                    }
+//                }
+//            }
+//        })
+
         // Add listener for new messages
         chatDatabase.child(chatId)
             .child(DATA_CHAT_MESSAGES)
+            .orderByChild(DATA_CHAT_MESSAGES_TIME_LONG)
             .addChildEventListener(chatMessagesListener)
-
-        // Add all match user info
-        chatDatabase.child(chatId)
-            .addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {}
-
-            override fun onDataChange(chatMembersDoc: DataSnapshot) {
-                chatMembersDoc.children.forEach { chatMember ->
-                    val memberUserId = chatMember.key  ?: ""
-                    val user = chatMember.getValue(User::class.java) // only getting profileImageUrl & username
-
-                    // Fill out the matches profile info
-                    if(memberUserId != userId) {
-                        bind.usernameTv.text = user?.username
-                        bind.profileImageIv.loadUrl(user?.profileImageUrl)
-                        if(user?.profileImageUrl.isNotNullAndNotEmpty()) matchProfileImageUrl = user?.profileImageUrl
-
-                        bind.profileImageIv.setOnClickListener {
-                            startActivity(UserInfoActivity.newIntent(this@ChatActivity, matchUserId))
-                        }
-                    }
-                }
-            }
-        })
-
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun onSend(v: View) {
         val message = Message(userId,
             bind.messageToSendEt.text.toString(),
-            Calendar.getInstance().time.toString()
+            Calendar.getInstance().time.toString(),
+            System.currentTimeMillis()
         )
         val key = chatDatabase.child(chatId)
             .child(DATA_CHAT_MESSAGES)

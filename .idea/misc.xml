@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1285" />
         <entry key="app/src/main/res/drawable/chat_box_bg_rounded.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/chat_current_message_bg_rounded.xml" value="0.1165" />
         <entry key="app/src/main/res/drawable/chat_mathed_message_bg_rounded.xml" value="0.1165" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1285" />
         <entry key="app/src/main/res/drawable/navigation_shadow.xml" value="0.1975" />
         <entry key="app/src/main/res/drawable/send_button_rounded.xml" value="0.229" />
         <entry key="app/src/main/res/drawable/standard_button_rounded.xml" value="0.229" />
@@ -13,7 +15,7 @@
         <entry key="app/src/main/res/drawable/tab_matches.xml" value="0.181" />
         <entry key="app/src/main/res/drawable/tab_profile.xml" value="0.16" />
         <entry key="app/src/main/res/drawable/tab_swipe.xml" value="0.181" />
-        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.25" />
