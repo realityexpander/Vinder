@@ -19,8 +19,12 @@ class ChatsAdapter(private var chats: ArrayList<Chat>) :
         notifyDataSetChanged()
     }
 
-    fun clear() {
+    fun clearAllChats() {
         chats.clear()
+    }
+
+    fun isChatsEmpty(): Boolean {
+        return chats.isEmpty()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) =

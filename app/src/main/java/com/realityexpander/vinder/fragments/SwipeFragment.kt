@@ -116,7 +116,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                     .child(swipedLeftUserId)
                     .setValue(true)
 
-                notifyIfCardSwipeItemsEmpty()
+                showEmptyIfCardSwipeItemsIsEmpty()
             }
 
             override fun onRightCardExit(swipedRightUserItem: Any?) {
@@ -128,7 +128,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                     addMatch(userId, swipedRightUserId!!, swipedRightUser)
                 }
 
-                notifyIfCardSwipeItemsEmpty()
+                showEmptyIfCardSwipeItemsIsEmpty()
             }
 
             override fun onAdapterAboutToEmpty(p0: Int) {}
@@ -252,11 +252,9 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                             if (potentialUser != null) {
                                 var showUser = true
 
-                                // has this potentialUser already been matched or swiped left on the current user?
+                                // has this potentialUser already been Matched *or* Swiped left on the current user?
                                 if (potentialUserMatch.child(DATA_USER_SWIPED_LEFT_USER_IDS)
                                         .hasChild(userId)
-        //                                || potentialUserMatch.child(DATA_USER_SWIPE_RIGHT_USER_IDS)
-        //                                    .hasChild(userId)
                                     || potentialUserMatch.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                         .hasChild(userId)
                                 ) {
@@ -277,7 +275,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                         bind.progressLayout.visibility = View.GONE
 
                         // Notify there are no more users to swipe
-                        notifyIfCardSwipeItemsEmpty()
+                        showEmptyIfCardSwipeItemsIsEmpty()
                     }
                 })
         }
@@ -300,8 +298,8 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
 
     }
 
-    // Notify there are no more users to swipe
-    private fun notifyIfCardSwipeItemsEmpty() {
+    // Show there are no more users to swipe
+    private fun showEmptyIfCardSwipeItemsIsEmpty() {
         if (cardSwipeItems.isEmpty()) {
             bind.noUsersLayout.visibility = View.VISIBLE
         }

@@ -73,7 +73,8 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
     override fun onUpdateUI() {
         if (!isAdded) return
 
-        chatsAdapter.clear()
+        chatsAdapter.clearAllChats()
+        bind.progressLayout.visibility = View.VISIBLE
 
         // Get all the chats for this userId
         userDatabase.child(userId)
@@ -83,8 +84,10 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
 
                 override fun onDataChange(matchUserIdToChatIdsDoc: DataSnapshot) {
                     if (matchUserIdToChatIdsDoc.hasChildren()) {
-
                         addAllChatsForUserId(userId, matchUserIdToChatIdsDoc)
+                    } else {
+                        showEmptyIfMatchesIsEmpty()
+                        bind.progressLayout.visibility = View.GONE
                     }
                 }
 
@@ -98,7 +101,6 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
             val chatId = matchUserIdToChatId.value.toString()
 
             if (matchUserId.isNotNullAndNotEmpty()) {
-
                 // Get the info for the matched user for this chatId
                 userDatabase.child(matchUserId!!)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -117,10 +119,22 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
                                     matchUser.profileImageUrl
                                 )
                                 chatsAdapter.addElement(chat)
+                                showEmptyIfMatchesIsEmpty()
                             }
+                            bind.progressLayout.visibility = View.GONE
                         }
                     })
             }
+        }
+        bind.progressLayout.visibility = View.GONE
+    }
+
+    // Show there are no more users to swipe
+    private fun showEmptyIfMatchesIsEmpty() {
+        if (chatsAdapter.isChatsEmpty()) {
+            bind.noMatchesLayout.visibility = View.VISIBLE
+        } else {
+            bind.noMatchesLayout.visibility = View.GONE
         }
     }
 }
