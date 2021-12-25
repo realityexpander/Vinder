@@ -83,41 +83,44 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
 
                 override fun onDataChange(matchUserIdToChatIdsDoc: DataSnapshot) {
                     if (matchUserIdToChatIdsDoc.hasChildren()) {
-                        
-                        // Add all the chats for this user
-                        matchUserIdToChatIdsDoc.children.forEach { matchUserIdToChatId ->
-                            val matchUserId = matchUserIdToChatId.key
-                            val chatId = matchUserIdToChatId.value.toString()
-                            
-                            if (matchUserId.isNotNullAndNotEmpty()) {
 
-                                // Get the info for the matched user for this chatId
-                                userDatabase.child(matchUserId!!)
-                                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onCancelled(error: DatabaseError) {}
-
-                                        override fun onDataChange(matchUserDoc: DataSnapshot) {
-                                            val matchUser = matchUserDoc.getValue(User::class.java)
-
-                                            // Add the matched user chat to the Chat list
-                                            if (matchUser != null) {
-                                                val chat = Chat(
-                                                    chatId,
-                                                    userId,
-                                                    matchUser.uid,
-                                                    matchUser.username,
-                                                    matchUser.profileImageUrl
-                                                )
-                                                chatsAdapter.addElement(chat)
-                                            }
-                                        }
-
-                                    })
-                            }
-                        }
+                        addAllChatsForUserId(userId, matchUserIdToChatIdsDoc)
                     }
                 }
 
             })
+    }
+
+    // Add all the chats for this user
+    private fun addAllChatsForUserId(userId: String, matchUserIdToChatIdsDoc: DataSnapshot) {
+        matchUserIdToChatIdsDoc.children.forEach { matchUserIdToChatId ->
+            val matchUserId = matchUserIdToChatId.key
+            val chatId = matchUserIdToChatId.value.toString()
+
+            if (matchUserId.isNotNullAndNotEmpty()) {
+
+                // Get the info for the matched user for this chatId
+                userDatabase.child(matchUserId!!)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(error: DatabaseError) {}
+
+                        override fun onDataChange(matchUserDoc: DataSnapshot) {
+                            val matchUser = matchUserDoc.getValue(User::class.java)
+
+                            // Add the matched user chat to the Chat list
+                            if (matchUser != null) {
+                                val chat = Chat(
+                                    chatId,
+                                    userId,
+                                    matchUser.uid,
+                                    matchUser.username,
+                                    matchUser.profileImageUrl
+                                )
+                                chatsAdapter.addElement(chat)
+                            }
+                        }
+                    })
+            }
+        }
     }
 }

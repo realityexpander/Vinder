@@ -29,9 +29,9 @@ class UserInfoActivity : AppCompatActivity() {
         val userDatabase = FirebaseDatabase.getInstance()
             .reference
             .child(DATA_USERS_COLLECTION)
+
         userDatabase.child(userId!!).addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-            }
+            override fun onCancelled(error: DatabaseError) {}
 
             override fun onDataChange(userDoc: DataSnapshot) {
                 val user = userDoc.getValue(User::class.java)

@@ -31,6 +31,7 @@ class CardsAdapter(context: Context?, resourceId: Int, users: List<User>):
         nameInfoTv.text = nameInfoString
         profileImageIv.loadUrl(user?.profileImageUrl)
 
+        // Click layout to show user info
         userInfoLayout.setOnClickListener {
             finalView.context.startActivity(UserInfoActivity.newIntent(finalView.context, user!!.uid))
         }

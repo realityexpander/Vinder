@@ -66,7 +66,6 @@ class LoginActivity : AppCompatActivity() {
             proceed = false
         }
         if (proceed) {
-
             if (bind.emailET.text.toString().isNotEmpty()
                 && bind.passwordET.text.toString().isNotEmpty()
             ) {

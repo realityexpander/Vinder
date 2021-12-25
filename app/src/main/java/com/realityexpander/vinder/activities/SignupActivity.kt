@@ -77,38 +77,36 @@ class SignupActivity : AppCompatActivity() {
                 firebaseAuth.createUserWithEmailAndPassword(
                     bind.emailET.text.toString(),
                     bind.passwordET.text.toString()
-                )
-                    .addOnCompleteListener { task ->
-                        if (!task.isSuccessful) {
-                            Toast.makeText(
+                ).addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Toast.makeText(
+                            this, "Signup error ${task.exception?.localizedMessage}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        val email = bind.emailET.text.toString()
+                        val userId = firebaseAuth.currentUser?.uid ?: ""
 
-                                this, "Signup error ${task.exception?.localizedMessage}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            val email = bind.emailET.text.toString()
-                            val userId = firebaseAuth.currentUser?.uid ?: ""
-
-                            // 2. Save User to DB
-                            var user: User? = User(userId, "", "", email, "", "", "")
-                            firebaseDatabase.child(DATA_USERS_COLLECTION)
-                                .child(userId)
-                                .setValue(user)
-                                .addOnSuccessListener {
-                                    Toast.makeText(
-                                        this, "User saved!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(
-                                        this, "Signup error ${task.exception?.localizedMessage}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    user = null
-                                }
-                        }
+                        // 2. Save User to DB
+                        var user: User? = User(userId, "", "", email, "", "", "")
+                        firebaseDatabase.child(DATA_USERS_COLLECTION)
+                            .child(userId)
+                            .setValue(user)
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    this, "User saved!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(
+                                    this, "Signup error ${task.exception?.localizedMessage}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                user = null
+                            }
                     }
+                }
             }
         }
     }

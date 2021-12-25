@@ -75,15 +75,12 @@ class ChatActivity : AppCompatActivity() {
             finish()
         }
 
+        // Setup view
         bind.usernameTv.text = matchUsername
         bind.profileImageIv.loadUrl(matchProfileImageUrl)
         bind.profileImageIv.setOnClickListener {
             startActivity(UserInfoActivity.newIntent(this@ChatActivity, matchUserId))
         }
-
-        chatDatabase = FirebaseDatabase.getInstance()
-            .reference
-            .child(DATA_CHATS_COLLECTION)
 
         messagesAdapter = MessagesAdapter(ArrayList(), userId)
         bind.messagesRv.apply {
@@ -91,6 +88,10 @@ class ChatActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
             adapter = messagesAdapter
         }
+
+        chatDatabase = FirebaseDatabase.getInstance()
+            .reference
+            .child(DATA_CHATS_COLLECTION)
 
         // Add listener for new messages
         chatDatabase.child(chatId)

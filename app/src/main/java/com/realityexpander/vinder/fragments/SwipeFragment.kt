@@ -34,9 +34,11 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         .reference
         .child(DATA_CHATS_COLLECTION)
 
-    private var cardsAdapter: ArrayAdapter<User>? = null
+    // View display
+    private var cardSwipeAdapter: ArrayAdapter<User>? = null
     private var cardSwipeItems = ArrayList<User>()
 
+    // User settings
     private var preferredGender: String? = null
     private var username: String? = null
     private var userProfileImageUrl: String? = null
@@ -49,7 +51,6 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         _bind = FragmentSwipeBinding.inflate(inflater, container, false)
         return bind.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,8 +66,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         // Get Current User profile
         userDatabase.child(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                }
+                override fun onCancelled(error: DatabaseError) {}
 
                 override fun onDataChange(currentUser: DataSnapshot) {
                     val user = currentUser.getValue(User::class.java) ?: return
@@ -79,10 +79,10 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                 }
             })
 
-        // Setup the cards adapter
-        cardsAdapter = CardsAdapter(context, R.layout.item_card, cardSwipeItems)
-        bind.frame.adapter = cardsAdapter
-        setupFlingAdapter()
+        // Setup the swipeCard adapter
+        cardSwipeAdapter = CardsAdapter(context, R.layout.item_card, cardSwipeItems)
+        bind.frame.adapter = cardSwipeAdapter
+        setupSwipeAdapter()
 
         // Setup Like button
         bind.likeButton.setOnClickListener {
@@ -99,12 +99,12 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
         }
     }
 
-    private fun setupFlingAdapter() {
+    private fun setupSwipeAdapter() {
         bind.frame.setFlingListener(object : SwipeFlingAdapterView.onFlingListener {
 
             override fun removeFirstObjectInAdapter() {
                 cardSwipeItems.removeAt(0)
-                cardsAdapter?.notifyDataSetChanged()
+                cardSwipeAdapter?.notifyDataSetChanged()
             }
 
             override fun onLeftCardExit(swipedLeftUserItem: Any?) {
@@ -116,24 +116,19 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                     .child(swipedLeftUserId)
                     .setValue(true)
 
-                // Notify there are no more users to swipe
-                if (cardSwipeItems.isEmpty()) {
-                    bind.noUsersLayout.visibility = View.VISIBLE
-                }
+                notifyIfCardSwipeItemsEmpty()
             }
 
             override fun onRightCardExit(swipedRightUserItem: Any?) {
                 val swipedRightUser = swipedRightUserItem as User
                 val swipedRightUserId = swipedRightUser.uid
 
+                // Add the swipedLeftUserId as a Match
                 if (swipedRightUserId.isNotNullAndNotEmpty()) {
                     addMatch(userId, swipedRightUserId!!, swipedRightUser)
                 }
 
-                // Notify there are no more users to swipe
-                if (cardSwipeItems.isEmpty()) {
-                    bind.noUsersLayout.visibility = View.VISIBLE
-                }
+                notifyIfCardSwipeItemsEmpty()
             }
 
             override fun onAdapterAboutToEmpty(p0: Int) {}
@@ -178,6 +173,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                                 .child(currentUserId)
                                 .removeValue()
 
+
                             // --------------------------------------------------
                             // ------ Add the match for the Matched users -------
                             // --------------------------------------------------
@@ -194,6 +190,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                                 .child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                 .child(currentUserId)
                                 .setValue(matchChatId)
+
 
                             // ----------------------------------------------------
                             // ----- Add the match chat for this matched pair -----
@@ -273,21 +270,19 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
 
                                 if (showUser) {
                                     cardSwipeItems.add(potentialUser)
-                                    cardsAdapter?.notifyDataSetChanged()
+                                    cardSwipeAdapter?.notifyDataSetChanged()
                                 }
                             }
                         }
                         bind.progressLayout.visibility = View.GONE
 
                         // Notify there are no more users to swipe
-                        if (cardSwipeItems.isEmpty()) {
-                            bind.noUsersLayout.visibility = View.VISIBLE
-                        }
+                        notifyIfCardSwipeItemsEmpty()
                     }
                 })
         }
 
-        // 1. Get all the users that this userId have already swiped on
+        // 1. Get all the userIds that this userId have already swiped on (left or right)
         userDatabase.child(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
@@ -303,6 +298,13 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
             })
 
 
+    }
+
+    // Notify there are no more users to swipe
+    private fun notifyIfCardSwipeItemsEmpty() {
+        if (cardSwipeItems.isEmpty()) {
+            bind.noUsersLayout.visibility = View.VISIBLE
+        }
     }
 
 }
