@@ -60,4 +60,16 @@
         <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
     </style>
+
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TextInputLayout</item>
+        <item name="enforceTextAppearance">false</item>
+        <item name="colorPrimary">@color/grey</item>  //Activated color
+    </style>
+
+    <style name="ThemeOverlay.App.TextInputLayout" parent="">
+        <item name="colorPrimary">@color/grey</item>  //Activated color
+        <item name="colorOnSurface">@color/grey</item>    //Normal color
+        <item name="colorError">@color/red</item>        //Error color
+    </style>
 </resources>

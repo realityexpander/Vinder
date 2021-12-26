@@ -115,7 +115,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                     val user = userSnapshot.getValue(User::class.java)
 
                     bind.nameEt.setText(user?.username, TextView.BufferType.EDITABLE)
-                    bind.emailEt.setText(user?.email, TextView.BufferType.EDITABLE)
+                    bind.emailTv.text = user?.email
                     bind.ageEt.setText(user?.age, TextView.BufferType.EDITABLE)
                     if (user?.gender == PREFERENCE_GENDER_MALE) {
                         bind.radioMan1.isChecked = true
@@ -135,6 +135,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                         savedProfileImageUrl = user.profileImageUrl
                         pickedImageUri = null // Cancel the previous picked image (if there is one)
                     }
+                    bind.profileTextEt.setText(user?.profileText, TextView.BufferType.EDITABLE)
                     bind.progressLayout.visibility = View.GONE
                 }
             }
@@ -143,7 +144,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
 
     private fun onApply() {
         if (bind.nameEt.text.toString().isEmpty() ||
-            bind.emailEt.text.toString().isEmpty() ||
+            bind.emailTv.text.toString().isEmpty() ||
             bind.genderGroup.checkedRadioButtonId == -1 ||
             bind.preferredGenderGroup.checkedRadioButtonId == -1
         ) {
@@ -155,13 +156,13 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
         } else {
             val name = bind.nameEt.text.toString()
             val age = bind.ageEt.text.toString()
-            val email = bind.emailEt.text.toString()
             val gender =
                 if (bind.radioMan1.isChecked) PREFERENCE_GENDER_MALE
                 else PREFERENCE_GENDER_FEMALE
             val preferredGender =
                 if (bind.radioMan2.isChecked) PREFERENCE_GENDER_MALE
                 else PREFERENCE_GENDER_FEMALE
+            val profileText = bind.profileTextEt.text.toString()
 
             userDatabase.child(userId)
                 .child(DATA_USER_USERNAME)
@@ -170,11 +171,11 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
                 .child(DATA_USER_AGE)
                 .setValue(age)
             userDatabase.child(userId)
-                .child(DATA_USER_EMAIL)
-                .setValue(email)
-            userDatabase.child(userId)
                 .child(DATA_USER_GENDER)
                 .setValue(gender)
+            userDatabase.child(userId)
+                .child(DATA_USER_PROFILE_TEXT)
+                .setValue(profileText)
             userDatabase.child(userId)
                 .child(DATA_USER_GENDER_PREFERENCE)
                 .setValue(preferredGender)

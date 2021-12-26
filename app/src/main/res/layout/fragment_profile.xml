@@ -30,11 +30,22 @@
                         android:scaleType="fitCenter"
                         android:src="@drawable/default_pic" />
 
+                <TextView
+                        android:id="@+id/emailTv"
+                        android:layout_width="@dimen/standard_width"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/photoIv"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_horizontal"
+                        android:text="email@provider.com"
+                        android:textSize="14sp" />
+
                 <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/nameTIL"
                         android:layout_width="@dimen/standard_width"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/photoIv"
+                        android:layout_below="@id/emailTv"
+                        android:theme="@style/Widget.App.TextInputLayout"
                         android:paddingBottom="8dp">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -46,25 +57,11 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/emailTIL"
-                        android:layout_width="@dimen/standard_width"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/nameTIL"
-                        android:paddingBottom="8dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/emailEt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_email" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/ageTIL"
                         android:layout_width="@dimen/standard_width"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/emailTIL"
+                        android:layout_below="@id/nameTIL"
+                        android:theme="@style/Widget.App.TextInputLayout"
                         android:paddingBottom="8dp">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -111,9 +108,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hint_woman" />
-
                     </RadioGroup>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -152,17 +147,40 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hint_woman" />
-
                     </RadioGroup>
-
                 </LinearLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/profileTextTIL"
+                        android:layout_width="@dimen/standard_width"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/preferredGenderLayout"
+                        android:paddingBottom="8dp"
+                        android:theme="@style/Widget.App.TextInputLayout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/profileTextEt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/hint_profile_description"
+                            android:inputType="textLongMessage|textAutoCorrect|textMultiLine|textAutoComplete"
+                            tools:text="This is some sample text that I wrote a long time ago in a galaxy far far away..." />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                        android:id="@+id/buttonLayout"
+                        android:layout_width="@dimen/standard_width"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/profileTextTIL"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
                 <Button
                         android:id="@+id/applyButton"
                         style="@style/StandardButton"
                         android:layout_width="@dimen/standard_width"
                         android:layout_height="@dimen/standard_height"
-                        android:layout_below="@id/preferredGenderLayout"
+                        android:layout_below="@id/profileTextTIL"
+                        android:layout_gravity="center_horizontal"
                         android:text="@string/button_apply" />
 
                 <Button
@@ -180,6 +198,7 @@
                         android:layout_height="@dimen/standard_height"
                         android:layout_below="@id/clearMatchesButton"
                         android:text="@string/button_sign_out" />
+                </LinearLayout>
 
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>

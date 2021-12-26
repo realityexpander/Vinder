@@ -8,36 +8,59 @@
             android:layout_height="match_parent"
             tools:context=".activities.UserInfoActivity">
 
-        <ImageView
-                android:id="@+id/userInfoProfileIV"
+        <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxHeight="500dp"
-                android:scaleType="fitCenter"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:layout_height="match_parent">
 
-        <TextView
-                android:id="@+id/userInfoName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="24dp"
-                android:textStyle="bold"
-                android:text="User name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/userInfoProfileIV"/>
+            <ImageView
+                    android:id="@+id/userInfoProfileIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:maxHeight="300dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/default_user" />
 
-        <TextView
-                android:id="@+id/userInfoAge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="20dp"
-                android:text="User age"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/userInfoName"/>
+            <TextView
+                    android:id="@+id/userInfoName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="User name"
+                    android:textSize="24dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/userInfoProfileIV" />
+
+            <TextView
+                    android:id="@+id/userInfoAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="User age"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toTopOf="@+id/userProfileText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/userInfoName" />
+
+            <TextView
+                    android:id="@+id/userProfileText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="left"
+                    android:text="Profile Text"
+                    android:textSize="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/userInfoAge" />
+
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

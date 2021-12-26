@@ -9,15 +9,14 @@
     <string name="login_button_text">Login</string>
     <string name="signup_button_text">Sign up</string>
 
-    <!-- Signup -->
+    <!-- Profile -->
     <string name="hint_name">Name</string>
     <string name="hint_age">Age</string>
-    <string name="hint_gender">I am a</string>
     <string name="hint_man">Man</string>
     <string name="hint_woman">Woman</string>
+    <string name="hint_gender">I am a</string>
     <string name="hint_preferred_gender">Looking for a</string>
-
-    <!-- Profile -->
+    <string name="hint_profile_description">Profile Description</string>
     <string name="button_sign_out">Sign out</string>
     <string name="button_apply">Apply</string>
     <string name="button_clear_matches">Clear Matches</string>

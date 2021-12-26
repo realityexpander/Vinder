@@ -8,6 +8,7 @@ data class User(
     val gender: String? = "",
     val preferredGender: String? = "",
     val profileImageUrl: String? = "",
+    val profileText: String? = "",
 
     val matchUserIdToChatIds: HashMap<String, String> = HashMap(),
     val swipeLeftUserIds: HashMap<String, Boolean> = HashMap(),

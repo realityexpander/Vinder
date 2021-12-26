@@ -58,6 +58,7 @@ class UserInfoActivity : AppCompatActivity() {
                 val user = userDoc.getValue(User::class.java)
                 bind.userInfoName.text = user?.username
                 bind.userInfoAge.text = user?.age
+                bind.userProfileText.text = user?.profileText ?: "<< no description >>"
                 if(user?.profileImageUrl != null) {
                     bind.userInfoProfileIV.loadUrl(user.profileImageUrl)
                 }
