@@ -51,7 +51,8 @@ class UserInfoActivity : AppCompatActivity() {
             .reference
             .child(DATA_USERS_COLLECTION)
 
-        userDatabase.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
+        userDatabase.child(userId)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {}
 
             override fun onDataChange(userDoc: DataSnapshot) {
