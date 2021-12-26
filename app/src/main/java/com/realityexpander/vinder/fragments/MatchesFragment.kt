@@ -66,6 +66,10 @@ class MatchesFragment : BaseFragment(), UpdateUiI {
             adapter = chatsAdapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         onUpdateUI()
     }

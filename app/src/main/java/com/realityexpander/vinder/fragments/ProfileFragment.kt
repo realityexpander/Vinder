@@ -183,7 +183,7 @@ class ProfileFragment : BaseFragment(), UpdateUiI {
             storePickedProfileImage()
 
             // Nav to Swipe via the activity
-            (activity as HostContextI).profileComplete()
+            (activity as HostContextI).onProfileComplete()
         }
     }
 

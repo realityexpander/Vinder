@@ -21,6 +21,7 @@ class ChatsAdapter(private var chats: ArrayList<Chat>) :
 
     fun clearAllChats() {
         chats.clear()
+        notifyDataSetChanged()
     }
 
     fun isChatsEmpty(): Boolean {

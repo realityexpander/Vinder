@@ -15,15 +15,16 @@ import com.realityexpander.vinder.fragments.BaseFragment
 import com.realityexpander.vinder.fragments.MatchesFragment
 import com.realityexpander.vinder.fragments.ProfileFragment
 import com.realityexpander.vinder.fragments.SwipeFragment
+import com.realityexpander.vinder.utils.VINDER_ACTIVITY_SELECTED_TAB_POSITION
 
 // Firebase console
 // https://console.firebase.google.com/u/1/project/vinder-dating-app/database/vinder-dating-app-default-rtdb/data
 
 // Tab & Fragment Id's
-private enum class FragmentId {
-    PROFILE,
-    SWIPE,
-    MATCHES_LIST,
+private enum class TabId {
+    PROFILE_TAB,
+    SWIPE_TAB,
+    MATCHES_LIST_TAB,
 }
 
 data class VinderTabLayout (
@@ -91,8 +92,8 @@ class VinderActivity : AppCompatActivity(), HostContextI {
                 }
             }
         })
-        bind.navigationTabs.setTabIconTintResource(R.color.tab_item) // tint the icons black and red
 
+        bind.navigationTabs.setTabIconTintResource(R.color.tab_item) // tint the icons black and red
         tabLayout.profileTab.select()
     }
 
@@ -124,10 +125,44 @@ class VinderActivity : AppCompatActivity(), HostContextI {
         finish()
     }
 
-    override fun profileComplete() {
+    override fun onProfileComplete() {
         tabLayout.swipeTab.select()
     }
 
-    override fun onAndroidFragmentCreated(fragment: BaseFragment) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // println("onSaveInstanceState for VinderActivity")
+
+        outState.apply {
+            putInt(VINDER_ACTIVITY_SELECTED_TAB_POSITION, bind.navigationTabs.selectedTabPosition)
+        }
     }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // println("onRestoreInstanceState for VinderActivity")
+
+        savedInstanceState.apply {
+            val selectedTabPosition = getInt(VINDER_ACTIVITY_SELECTED_TAB_POSITION)
+
+            tabLayout.profileTab.select()
+            when (TabId.values()[selectedTabPosition]) {
+                TabId.PROFILE_TAB -> tabLayout.profileTab.select()
+                TabId.SWIPE_TAB -> tabLayout.swipeTab.select()
+                TabId.MATCHES_LIST_TAB -> tabLayout.matchesTab.select()
+            }
+        }
+    }
+
+    // After process death recovery fragment creation, update the fragment vars
+    override fun onAndroidFragmentCreated(fragment: BaseFragment) {
+
+        // note: fragment type is created inside the fragment upon process death recovery
+        when (fragment) {
+            is ProfileFragment -> profileFragment = fragment
+            is SwipeFragment -> swipeFragment = fragment
+            is MatchesFragment -> matchesFragment = fragment
+        }
+    }
+
+
 }

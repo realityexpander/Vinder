@@ -56,3 +56,8 @@ const val DATA_CHAT_MESSAGES_TIME_LONG = "timeMsLong"
 
 // ------- IMAGE STORAGE --------
 const val DATA_IMAGE_STORAGE_PROFILE_IMAGES = "profileImage"
+
+// ------- Save & Restore State ---------
+const val VINDER_ACTIVITY_SELECTED_TAB_POSITION = "Vinder Activity selectedTabPosition"
+
+const val USER_INFO_ACTIVITY_USER_ID = "UserInfo Activity userId"

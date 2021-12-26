@@ -11,18 +11,39 @@ import com.google.firebase.database.ValueEventListener
 import com.realityexpander.vinder.databinding.ActivityUserInfoBinding
 import com.realityexpander.vinder.models.User
 import com.realityexpander.vinder.utils.DATA_USERS_COLLECTION
+import com.realityexpander.vinder.utils.USER_INFO_ACTIVITY_USER_ID
+import com.realityexpander.vinder.utils.VINDER_ACTIVITY_SELECTED_TAB_POSITION
 import com.realityexpander.vinder.utils.loadUrl
 
 class UserInfoActivity : AppCompatActivity() {
     private lateinit var bind: ActivityUserInfoBinding
+
+    private var userId = ""
+
+    companion object {
+        const val USER_INFO_PARAM_USER_ID = "User id"
+
+        fun newIntent(context: Context, userId: String?): Intent {
+            val intent = Intent(context, UserInfoActivity::class.java)
+            intent.putExtra(USER_INFO_PARAM_USER_ID, userId)
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityUserInfoBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
-        val userId = intent.extras?.getString(USER_INFO_PARAM_USER_ID, "")
-        if(userId.isNullOrEmpty()) {
+        if (savedInstanceState == null) {
+            userId = intent.extras?.getString(USER_INFO_PARAM_USER_ID, "") ?: ""
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if(userId.isEmpty()) {
             finish()
         }
 
@@ -30,7 +51,7 @@ class UserInfoActivity : AppCompatActivity() {
             .reference
             .child(DATA_USERS_COLLECTION)
 
-        userDatabase.child(userId!!).addListenerForSingleValueEvent(object: ValueEventListener {
+        userDatabase.child(userId).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {}
 
             override fun onDataChange(userDoc: DataSnapshot) {
@@ -44,13 +65,22 @@ class UserInfoActivity : AppCompatActivity() {
         })
     }
 
-    companion object {
-        const val USER_INFO_PARAM_USER_ID = "User id"
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // println("onSaveInstanceState for UserInfoActivity")
 
-        fun newIntent(context: Context, userId: String?): Intent {
-            val intent = Intent(context, UserInfoActivity::class.java)
-            intent.putExtra(USER_INFO_PARAM_USER_ID, userId)
-            return intent
+        outState.apply {
+            putString(USER_INFO_ACTIVITY_USER_ID, userId)
         }
     }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // println("onRestoreInstanceState for UserInfoActivity")
+
+        savedInstanceState.apply {
+            userId = getString(USER_INFO_ACTIVITY_USER_ID, "").toString()
+        }
+    }
+
+
 }

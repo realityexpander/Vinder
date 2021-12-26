@@ -1,7 +1,5 @@
 package com.realityexpander.vinder.fragments
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -62,7 +60,7 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
             hostContextI?.onAndroidFragmentCreated(this@SwipeFragment)
 
             // not needed yet
-            // onViewStateRestored(savedInstanceState)
+            //onViewStateRestored(savedInstanceState)
         }
 
         // Get Current User profile
@@ -249,17 +247,17 @@ class SwipeFragment : BaseFragment(), UpdateUiI {
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {}
 
-                    override fun onDataChange(potentialUserMatchDoc: DataSnapshot) {
-                        potentialUserMatchDoc.children.forEach { potentialUserMatch ->
-                            val potentialUser = potentialUserMatch.getValue(User::class.java)
+                    override fun onDataChange(potentialMatchUserDoc: DataSnapshot) {
+                        potentialMatchUserDoc.children.forEach { potentialMatchUser ->
+                            val potentialUser = potentialMatchUser.getValue(User::class.java)
 
                             if (potentialUser != null) {
                                 var showUser = true
 
                                 // has this potentialUser already been Matched *or* Swiped left on the current user?
-                                if (potentialUserMatch.child(DATA_USER_SWIPED_LEFT_USER_IDS)
+                                if (potentialMatchUser.child(DATA_USER_SWIPED_LEFT_USER_IDS)
                                         .hasChild(userId)
-                                    || potentialUserMatch.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
+                                    || potentialMatchUser.child(DATA_USER_MATCH_USER_ID_TO_CHAT_IDS)
                                         .hasChild(userId)
                                 ) {
                                     showUser = false
