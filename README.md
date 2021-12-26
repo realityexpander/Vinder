@@ -10,4 +10,4 @@ Tinder clone with card swiping, firebase fireDB, messaging.
 - Allows users to view profile information for each user
 - Once users are matched, allows users to communicate with each other in real time
 
-- Allows users to reset all users swiped or matched
+- Allows users to reset all swiped or matched other users
