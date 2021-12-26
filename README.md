@@ -12,5 +12,5 @@ Tinder clone with card swiping, firebase fireDB, messaging.
 
 - Uses Firebase Realtime Database for storing data
 - Uses Firebase FireStore for storing images
-- Uses Firbase Authentication for registering users
+- Uses Firebase Authentication for registering users
 - Uses Activities, Fragments, Tabs, Android Photo Picker
