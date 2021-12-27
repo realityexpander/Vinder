@@ -1,11 +1,16 @@
 # Vinder
 Tinder clone with card swiping, firebase fireDB, messaging.
 
+
+[<img src="https://user-images.githubusercontent.com/5157474/147438010-0b764a81-48f3-4344-9cbb-8a61cbdf48f9.png" width="200"/>]()
+[<img src="https://user-images.githubusercontent.com/5157474/147438018-2c266bba-aaf5-468f-b511-4ffe407fceb6.png" width="200"/>]()
+[<img src="https://user-images.githubusercontent.com/5157474/147438031-1b00df9c-03e9-4669-8553-70ea109775df.png" width="200"/>]()
+[<img src="https://user-images.githubusercontent.com/5157474/147438055-e49d8fba-54c1-4f13-a832-4a4fd64bf3b7.png" width="200"/>]()
+
 - Allows users to save a profile with age, name, gender, gender preferences, photo and description
 - Allows other users to swipe left and right on other users
 - Allows users to view profile information for each user
 - Once users are matched, allows users to communicate with each other in real time
-
 - Allows users to reset all swiped or matched other users
 
 ---- Tech used ----
